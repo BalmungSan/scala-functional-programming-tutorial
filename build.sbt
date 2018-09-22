@@ -9,6 +9,7 @@ scalacOptions ++= Seq(
   "-explaintypes",
   "-feature",
   "-unchecked",
+  "-language:higherKinds",
   "-Xlint:infer-any",
   "-Xlint:unsound-match",
   "-Ypartial-unification",
@@ -21,7 +22,7 @@ scalacOptions ++= Seq(
   "-Ywarn-unused:locals",
   "-Ywarn-unused:params",
   "-Ywarn-unused:patvars",
-  "-Ywarn-unused:privates",
+  "-Ywarn-unused:privates"
 )
 
 val CatsVersion = "1.4.0"
