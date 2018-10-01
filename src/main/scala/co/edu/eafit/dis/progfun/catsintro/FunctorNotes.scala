@@ -101,4 +101,22 @@ object FunctorNotes extends App {
   val tree: Tree[Int] = Branch(left  = Leaf(10), right = Branch(left  = Leaf(3), right = Leaf(5)))
   val summedTree = sumOne(tree)
   println(s"Given sumOne[F[_]: Functor](fa: F[Int]): F[Int] = fa.map(x => x + 1)\t->\tsumOne(Branch(Leaf(10),Branch(Leaf(3),Leaf(5)))) = ${summedTree}")
+
+  // Contravariant Functors.
+  // If normal (covariant) Functors allow us to append operations inside a context,
+  // Contravariant Functors allow us to prepend operations to the chain using the contramap method.
+  trait Printer[A] {
+    self =>
+
+    def format(value: A): String
+
+    def contramap[B](f: B => A): Printer[B] = new Printer[B] {
+      override def format(value: B): String = self.format(f(value))
+    }
+  }
+  val StringPrinter: Printer[String] = new Printer[String] {
+    override def format(value: String): String = value
+  }
+  val IntPrinter: Printer[Int] = StringPrinter.contramap(x => s"${x}!")
+  println(s"Given IntPrinter = Printer[String].contramap(x => s'$${x}')\t->\tIntPrinter.format(1) = ${IntPrinter.format(1)}")
 }
