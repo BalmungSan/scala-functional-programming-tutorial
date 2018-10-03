@@ -107,9 +107,7 @@ object FunctorNotes extends App {
   // Contravariant Functors allow us to prepend operations to the chain using the contramap method.
   trait Printer[A] {
     self =>
-
     def format(value: A): String
-
     def contramap[B](f: B => A): Printer[B] = new Printer[B] {
       override def format(value: B): String = self.format(f(value))
     }
@@ -119,4 +117,25 @@ object FunctorNotes extends App {
   }
   val IntPrinter: Printer[Int] = StringPrinter.contramap(x => s"${x}!")
   println(s"Given IntPrinter = Printer[String].contramap(x => s'$${x}')\t->\tIntPrinter.format(1) = ${IntPrinter.format(1)}")
+
+  // Invariant Functors.
+  // Invariant Functors allows us to both append & prepend operations inside a context.
+  // The imap method is informally equivalent to a convination of map and contramap.
+  trait Codec[A] {
+    self =>
+    def encode(value: A): String
+    def decode(data: String): A
+    def imap[B](dec: A => B, enc: B => A): Codec[B] = new Codec[B] {
+      override def encode(value: B): String = self.encode(enc(value))
+      override def decode(data: String): B = dec(self.decode(data))
+    }
+  }
+  val StringCodec: Codec[String] = new Codec[String] {
+    override def encode(value: String): String = value
+    override def decode(data: String): String = data
+  }
+  val IntCodec: Codec[Int] = StringCodec.imap(s => s.toInt, x => x.toString)
+  val encoded = IntCodec.encode(10)
+  val decoded = IntCodec.decode(encoded)
+  println(s"Given IntCodec = Codec[String].imap(s => s.toInt, x => x.toString)\t->\tIntCodec.decode(IntCodec.encode(10)) = ${decoded}")
 }
