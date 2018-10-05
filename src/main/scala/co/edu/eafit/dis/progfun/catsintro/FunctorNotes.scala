@@ -102,6 +102,17 @@ object FunctorNotes extends App {
   val summedTree = sumOne(tree)
   println(s"Given sumOne[F[_]: Functor](fa: F[Int]): F[Int] = fa.map(x => x + 1)\t->\tsumOne(Branch(Leaf(10),Branch(Leaf(3),Leaf(5)))) = ${summedTree}")
 
+  // Functors compose.
+  // Functors are composable, that means given a Functor[F[_]] and a Functor[G[_]],
+  // You can create a Functor[F[G[_]]], which will map values inside the two contexts a the same time.
+  type ListOption[A] = List[Option[A]]
+  val ListOptionFunctor: Functor[ListOption] = Functor[List].compose[Option]
+  val mapped5 = ListOptionFunctor.map(List(Some(3), None, Some(5)))(x => x + 1)
+  println(s"Functor[List].compose[Option].map(List(Some(3), None, Some(5)))(x => x + 1) = ${mapped5}")
+  // Note: For a more general solution to the above problem use Cat's Nested data type.
+  // https://typelevel.org/cats/typeclasses/functor.html#functors-compose
+  // https://typelevel.org/cats/datatypes/nested.html
+
   // Contravariant Functors.
   // If normal (covariant) Functors allow us to append operations inside a context,
   // Contravariant Functors allow us to prepend operations to the chain using the contramap method.
