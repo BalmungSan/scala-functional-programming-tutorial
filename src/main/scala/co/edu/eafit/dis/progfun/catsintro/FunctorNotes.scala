@@ -1,9 +1,9 @@
 package co.edu.eafit.dis.progfun.catsintro
 
 import cats.Functor // Import the Functor type class.
-import cats.instances.function._ // Brings the implicit Functor[X => ?] instance to scope.
+import cats.instances.function._ // Brings the implicit Functor[X => _] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
-import cats.instances.list._ // Brings the implicit Functor[List[?]] instance to scope.
+import cats.instances.list._ // Brings the implicit Functor[List[_]] instance to scope.
 import cats.instances.string._ // Brings the implicit Eq[String] instance to scope.
 import cats.syntax.eq.catsSyntaxEq // Provides the === operator for type safe equality checks.
 import cats.syntax.functor.toFunctorOps // Provides the map operator for mapping a Functor.
