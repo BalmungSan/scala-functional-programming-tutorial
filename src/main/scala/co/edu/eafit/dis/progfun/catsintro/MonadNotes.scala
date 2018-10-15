@@ -4,6 +4,7 @@ import cats.Eval // Import the Eval Monad data type.
 import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
 import cats.MonadError // Import the MonadErorr type class.
+import cats.data.Writer // Import the Writer Monad data type.
 import cats.instances.either._ // Brings the implicit MonadError[Either[E, _], E] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
 import cats.instances.list._ // Brings the implicit Monad[List[_]] instance to scope.
@@ -88,8 +89,7 @@ object MonadNotes extends App {
   println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(3, 5) = ${flatMapped8}")
 
   // Monad Error!
-  // The Monad Error provides a better abstraction for Either-like  data types,
-  // which are used for error handling.
+  // The monad error provides a better abstraction for Either-like data types, which are used for error handling.
   type ErrorOr[A] = Either[String, A]
   val EitherMonadError = MonadError[ErrorOr, String]
   val success = EitherMonadError.pure(42)
@@ -118,4 +118,14 @@ object MonadNotes extends App {
   def safeFactorial(n: BigInt): Eval[BigInt] = if (n == 1) Eval.now(1) else Eval.defer(safeFactorial(n - 1).map(_ * n))
   val safeComputed = safeFactorial(50000).value.toString.substring(0, 5) // Cap the string, the real number is very long to print
   println(s"Given safeFactorial = n => if (n == 1) Eval.now(1) else Eval.defer(safeFactorial(n - 1).map(_ * n))\t->\tsafeFactorial(50000) = ${safeComputed}...")
+
+  // Writer Monad!
+  // The writer monad lets us carry a log along with a computation.
+  type Logged[A] = Writer[List[String], A]
+  def loggedFacotrial(n: Int): Logged[Int] = for {
+    ans <- if (n == 1) Writer.value[List[String], Int](1) else loggedFacotrial(n - 1)
+    log <- Writer.tell(List(s"fact ${n}, ${ans}"))
+  } yield ans
+  val (log, value) = loggedFacotrial(5).run
+  println(s"Given loggedFacotrial = n => for (ans <- if (n == 1) Writer.value(1) else loggedFacotrial(n - 1); _ <- Writer.tell(List(s'fact $${n}, $${ans}'))) yield ans\t->\tloggedFacotrial(5), log = ${log}, value = ${value}")
 }
