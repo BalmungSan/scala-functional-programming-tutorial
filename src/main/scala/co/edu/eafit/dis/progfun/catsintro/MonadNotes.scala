@@ -1,7 +1,9 @@
 package co.edu.eafit.dis.progfun.catsintro
 
-import cats.Id // Import the Id Monad.
+import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
+import cats.MonadError // Import the MonadErorr type class.
+import cats.instances.either._ // Brings the implicit MonadError[Either[E, _], E] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
 import cats.instances.list._ // Brings the implicit Monad[List[_]] instance to scope.
 import cats.syntax.eq.catsSyntaxEq // Provides the === operator for type safe equality checks.
@@ -76,11 +78,25 @@ object MonadNotes extends App {
   println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(Some(3), None) = ${flatMapped6}")
   println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(List(1, 2, 3), List(0, 5, 10)) = ${flatMapped7}")
 
-  // The Identity Monad!
+  // Identity Monad!
   // The Id[_] cats' data type, is a convenient wrapper of a plain type T
   // To use pure values in monadic computations.
   val a = Monad[Id].pure(3)
   val b = Monad[Id].pure(5)
   val flatMapped8 = sumSquare(a, b)
   println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(3, 5) = ${flatMapped8}")
+
+  // Monad Error!
+  // The Monad Error provides a better abstraction for Either-like  data types,
+  // which are used for error handling.
+  type ErrorOr[A] = Either[String, A]
+  val EitherMonadError = MonadError[ErrorOr, String]
+  val success = EitherMonadError.pure(42)
+  println(s"MonadError[Either[String, _], String].pure(42) = ${success}")
+  val failure = EitherMonadError.raiseError[Int]("Kabum!")
+  println(s"MonadError[Either[String, _], String].raiseError('Kabum!') = ${failure}")
+  val recovered = EitherMonadError.handleErrorWith(failure) { case "Kabum!" => EitherMonadError.pure(0); case _ => EitherMonadError.raiseError("Unexpected error") }
+  println(s"EitherMonadError.handleErrorWith(failure) { case 'Kabum!' => EitherMonadError.pure(0); case _ => EitherMonadError.raiseError('Unexpected error') } = ${recovered}")
+  val ensured = EitherMonadError.ensure(success)("Number too low")(_ >= 50)
+  println(s"EitherMonadError.ensure(success)('Number too low')(_ >= 50) = ${ensured}")
 }
