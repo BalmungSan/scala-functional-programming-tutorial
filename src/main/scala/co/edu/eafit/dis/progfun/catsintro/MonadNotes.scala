@@ -5,6 +5,7 @@ import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
 import cats.MonadError // Import the MonadErorr type class.
 import cats.data.Reader // Import the Writer Monad data type.
+import cats.data.State // Import the Satet Monad data type.
 import cats.data.Writer // Import the Writer Monad data type.
 import cats.instances.either._ // Brings the implicit MonadError[Either[E, _], E] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
@@ -144,4 +145,31 @@ object MonadNotes extends App {
   } yield s"${greet}\t${feed}."
   val cat = Cat("Garfield", "lasagne")
   println(s"Given greetCat = Reader(cat => s'Hello, $${cat.name}!'), eedCat = Reader(cat => s'Have a nice bowl of ${cat.favoriteFood}'), greetAndFeedCat = for (greet <- greetCat; feed <- feedCat) yield s'$${greet}\t$${feed}.' & cat = Cat('Garfield', 'lasagne')\t->\tgreetAndFeedCat(cat) = ${greetAndFeedCat(cat)}")
+
+  // State Monad!
+  // The state monad model a mutable state in a purely functional way,
+  // which allow us to read and modify a shared state trough computations.
+  type Stack[A] = List[A]
+  type CalcState[R] = State[Stack[R], R]
+  import Fractional.Implicits.infixFractionalOps
+  def evalOne[R: Fractional](symbol: String): CalcState[R] = symbol match {
+    case "+" => operator(_ + _)
+    case "-" => operator(_ - _)
+    case "*" => operator(_ * _)
+    case "/" => operator(_ / _)
+    case num => operand(implicitly[Fractional[R]].fromInt(num.toInt))
+  }
+  def operator[R: Fractional](fun: (R, R) => R): CalcState[R] = State {
+    case a :: b :: tail => val ans = fun(a, b); (ans :: tail, ans)
+  }
+  def operand[R: Fractional](num: R): CalcState[R] = State {
+    stack => (num :: stack, num)
+  }
+  def evalAll[R: Fractional](symbols: Iterable[String]): CalcState[R] =
+    symbols.foldLeft[CalcState[R]](State.pure(implicitly[Fractional[R]].zero)) {
+      (state, symbol) => state.flatMap(_ => evalOne(symbol))
+    }
+  def evalInput[R: Fractional](input: String): R =
+    evalAll(symbols = input.split(" ")).runA(Nil).value
+  println(s"evalInput('5 1 2 + 3 * /') = ${evalInput[Double]("5 1 2 + 3 * /")}")
 }
