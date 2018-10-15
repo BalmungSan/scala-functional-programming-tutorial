@@ -1,5 +1,6 @@
 package co.edu.eafit.dis.progfun.catsintro
 
+import cats.Eval // Import the Eval Monad data type.
 import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
 import cats.MonadError // Import the MonadErorr type class.
@@ -99,4 +100,22 @@ object MonadNotes extends App {
   println(s"EitherMonadError.handleErrorWith(failure) { case 'Kabum!' => EitherMonadError.pure(0); case _ => EitherMonadError.raiseError('Unexpected error') } = ${recovered}")
   val ensured = EitherMonadError.ensure(success)("Number too low")(_ >= 50)
   println(s"EitherMonadError.ensure(success)('Number too low')(_ >= 50) = ${ensured}")
+
+  // Eval Monad!
+  // The eval monad abstracts over different models of evaluation.
+  // Eager - val (now), Lazy - def (always) & Memoized - lazy val (latter).
+  // Note: Eval's map & flatMap methods store the chain as a list of functions (in the heap),
+  // and aren't run until we ask for the Eval's value - also those two methods
+  // are trampolined, that means, they are stack safe.
+  // Additionally, the defer method allow us to defer the evaluation of an Eval.
+  val it = List(1, 2, 3, 4, 5).toIterator
+  val now = Eval.now(it.next())
+  println(s"Given it = 1 to 5\t->\tNow = ${now}, value1 = ${now.value}, value2 = ${now.value}")
+  val latter = Eval.later(it.next())
+  println(s"Given it = 1 to 5\t->\tLatter = ${latter}, value1 = ${latter.value}, value2 = ${latter.value}")
+  val always = Eval.always(it.next())
+  println(s"Given it = 1 to 5\t->\tAlways = ${always}, value1 = ${always.value}, value2 = ${always.value}")
+  def safeFactorial(n: BigInt): Eval[BigInt] = if (n == 1) Eval.now(1) else Eval.defer(safeFactorial(n - 1).map(_ * n))
+  val safeComputed = safeFactorial(50000).value.toString.substring(0, 5) // Cap the string, the real number is very long to print
+  println(s"Given safeFactorial = n => if (n == 1) Eval.now(1) else Eval.defer(safeFactorial(n - 1).map(_ * n))\t->\tsafeFactorial(50000) = ${safeComputed}...")
 }
