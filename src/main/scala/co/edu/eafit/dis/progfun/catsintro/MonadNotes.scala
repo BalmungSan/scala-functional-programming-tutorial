@@ -4,6 +4,7 @@ import cats.Eval // Import the Eval Monad data type.
 import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
 import cats.MonadError // Import the MonadErorr type class.
+import cats.data.Reader // Import the Writer Monad data type.
 import cats.data.Writer // Import the Writer Monad data type.
 import cats.instances.either._ // Brings the implicit MonadError[Either[E, _], E] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
@@ -128,4 +129,19 @@ object MonadNotes extends App {
   } yield ans
   val (log, value) = loggedFacotrial(5).run
   println(s"Given loggedFacotrial = n => for (ans <- if (n == 1) Writer.value(1) else loggedFacotrial(n - 1); _ <- Writer.tell(List(s'fact $${n}, $${ans}'))) yield ans\t->\tloggedFacotrial(5), log = ${log}, value = ${value}")
+
+  // Reader Monad!
+  // The reader monad is useful to compose computations which have a common dependency.
+  // This way, we can inject the dependency at the end to run the computation.
+  // This design, combined with Dependency Injection Principle (D in SOLID),
+  // leads to software that is easier to unit-test.
+  final case class Cat(name: String, favoriteFood: String)
+  val greetCat: Reader[Cat, String] = Reader(cat => s"Hello, ${cat.name}!")
+  val feedCat: Reader[Cat, String] = Reader(cat => s"Have a nice bowl of ${cat.favoriteFood}")
+  val greetAndFeedCat: Reader[Cat, String] = for {
+    greet <- greetCat
+    feed <- feedCat
+  } yield s"${greet}\t${feed}."
+  val cat = Cat("Garfield", "lasagne")
+  println(s"Given greetCat = Reader(cat => s'Hello, $${cat.name}!'), eedCat = Reader(cat => s'Have a nice bowl of ${cat.favoriteFood}'), greetAndFeedCat = for (greet <- greetCat; feed <- feedCat) yield s'$${greet}\t$${feed}.' & cat = Cat('Garfield', 'lasagne')\t->\tgreetAndFeedCat(cat) = ${greetAndFeedCat(cat)}")
 }
