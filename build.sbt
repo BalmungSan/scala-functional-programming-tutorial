@@ -22,10 +22,13 @@ scalacOptions ++= Seq(
   "-Ywarn-unused:locals",
   "-Ywarn-unused:params",
   "-Ywarn-unused:patvars",
-  "-Ywarn-unused:privates"
+  "-Ywarn-unused:privates",
+  "-Dkp:genAsciiNames=true"
 )
 
 val CatsVersion = "1.4.0"
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % CatsVersion
 )
+
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")

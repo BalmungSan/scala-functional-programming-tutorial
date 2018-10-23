@@ -5,7 +5,7 @@ import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
 import cats.MonadError // Import the MonadErorr type class.
 import cats.data.Reader // Import the Writer Monad data type.
-import cats.data.State // Import the Satet Monad data type.
+import cats.data.State // Import the State Monad data type.
 import cats.data.Writer // Import the Writer Monad data type.
 import cats.instances.either._ // Brings the implicit MonadError[Either[E, _], E] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
@@ -92,8 +92,7 @@ object MonadNotes extends App {
 
   // Monad Error!
   // The monad error provides a better abstraction for Either-like data types, which are used for error handling.
-  type ErrorOr[A] = Either[String, A]
-  val EitherMonadError = MonadError[ErrorOr, String]
+  val EitherMonadError = MonadError[Lambda[A => Either[String, A]], String]
   val success = EitherMonadError.pure(42)
   println(s"MonadError[Either[String, _], String].pure(42) = ${success}")
   val failure = EitherMonadError.raiseError[Int]("Kabum!")

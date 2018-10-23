@@ -105,8 +105,7 @@ object FunctorNotes extends App {
   // Functors compose.
   // Functors are composable, that means given a Functor[F[_]] and a Functor[G[_]],
   // You can create a Functor[F[G[_]]], which will map values inside the two contexts a the same time.
-  type ListOption[A] = List[Option[A]]
-  val ListOptionFunctor: Functor[ListOption] = Functor[List].compose[Option]
+  val ListOptionFunctor: Functor[Lambda[A => List[Option[A]]]] = Functor[List].compose[Option]
   val mapped5 = ListOptionFunctor.map(List(Some(3), None, Some(5)))(x => x + 1)
   println(s"Functor[List].compose[Option].map(List(Some(3), None, Some(5)))(x => x + 1) = ${mapped5}")
   // Note: For a more general solution to the above problem use Cat's Nested data type.
