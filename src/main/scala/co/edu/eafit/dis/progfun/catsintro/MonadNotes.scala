@@ -4,6 +4,7 @@ import cats.Eval // Import the Eval Monad data type.
 import cats.Id // Import the Id Monad data type.
 import cats.Monad // Import the Monad type class.
 import cats.MonadError // Import the MonadErorr type class.
+import cats.data.OptionT // Import the Option Monad Transformer data type.
 import cats.data.Reader // Import the Writer Monad data type.
 import cats.data.State // Import the State Monad data type.
 import cats.data.Writer // Import the Writer Monad data type.
@@ -171,4 +172,18 @@ object MonadNotes extends App {
   def evalInput[R: Fractional](input: String): R =
     evalAll(symbols = input.split(" ")).runA(Nil).value
   println(s"evalInput('5 1 2 + 3 * /') = ${evalInput[Double]("5 1 2 + 3 * /")}")
+
+  // Monad Transformers!
+  // Transformers allow us to compose two monads together.
+  // However, since is impossible to compose any two monads generally,
+  // the transformer must know something about at least one monad (in this case the inner most).
+  // Thus, there must be one transformer for each monad we would like to compose
+  // with any other arbitrary outer monad.
+  val eitherOptionA = OptionT.pure[Either[String, ?]](10)
+  val eitherOptionB = OptionT.pure[Either[String, ?]](30)
+  val flatMapped9 = for {
+    a <- eitherOptionA
+    b <- eitherOptionB
+  } yield a + b
+  println(s"Given fa = OptionT.pure[Either[String, ?]](10), fb = OptionT.pure[Either[String, ?]](40)\t->\tfor (a <- fa; b <- fb) yield a + b = ${flatMapped9.value}")
 }
