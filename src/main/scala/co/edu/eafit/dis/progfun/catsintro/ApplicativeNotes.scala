@@ -1,10 +1,12 @@
 package co.edu.eafit.dis.progfun.catsintro
 
 import cats.Applicative // Import the Monad type class.
+import cats.data.ValidatedNec // Import the Validated[NonEmptyChain[E], _] data type.
 import cats.instances.either._ // Brings the implicit Applicative[Either[E, _]] instance to scope.
 import cats.instances.option._ // Brings the implicit Applicative[Option[_]] instance to scope.
 import cats.syntax.apply._ // Provides the tupled and mapN operators.
 import cats.syntax.option._ // Provides the option smart constructors.
+import cats.syntax.validated._ // Provides the validated smart constructors.
 
 object ApplicativeNotes extends App {
   // Applicative allow us to join values inside a context,
@@ -46,4 +48,15 @@ object ApplicativeNotes extends App {
       Left(List("Error 2"))
     )
   println(s"Applicative[Either[List[String], ?]].product(Left(List('Error 1')), Left(List('Error 2'))) = ${eitherErrors}")
+
+  // Validated!
+  // Validated is a cats' Data Type similar to Either that has an instance of Applicative,
+  // but no instance of Monad. Thus, the implementation of product is free to accumulate errors.
+  val validatedErrors =
+    Applicative[ValidatedNec[String, ?]].tuple3(
+      "Error 1".invalidNec,
+      10.validNec,
+      "Error 2".invalidNec
+    )
+  println(s"Applicative[Validated[Chain[String], ?]].tuple3(Invalid('Error 1'), Valid(10), Invalid('Error 2')) = ${validatedErrors}")
 }
