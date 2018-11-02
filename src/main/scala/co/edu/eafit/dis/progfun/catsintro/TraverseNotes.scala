@@ -3,7 +3,10 @@ package co.edu.eafit.dis.progfun.catsintro
 import cats.Traverse // Import the Traverse type class.
 import cats.instances.int._ // Brings the implicit Monoid[Int] instance to scope.
 import cats.instances.list._ // Brings the implicit Traverse[List[_]] instance to scope.
+import cats.instances.option._ // Brings the implicit Applicative[Option[_]] instance to scope.
 import cats.syntax.foldable._ // Provides the combineAll and foldMap methods.
+import cats.syntax.option._ // Provides the option smart constructors.
+import cats.syntax.traverse._ // Provides the sequence and traverse methods.
 
 object TraverseNotes extends App {
   // Folding!
@@ -34,4 +37,17 @@ object TraverseNotes extends App {
   // which will save us one iteration over the collection.
   val folded4 = List(1, 2, 3).foldMap(n => n * 2)
   println(s"List(1, 2, 3).foldMap(n => n * 2) = ${folded4}")
+
+  // Sequence!
+  // If you have a collection C of effects F of values T,
+  // and you want to turn it into an effect of a collection of values F[C[T]].
+  // You can use the Traverse sequence method - if there is an Applicative for F.
+  val sequenced = List(1.some, 3.some, 5.some).sequence
+  println(s"List(Some(1), Some(3), Some(5)).sequence = ${sequenced}")
+
+  // Traverse!
+  // Similar to foldMap, if you need to perform some transformation to the values
+  // before sequencing the effect with the collection, you can use the traverse method.
+  val traversed = List(1, 3, 5).traverse(n => if (n % 2 == 0) none[Int] else n.some)
+  println(s"List(1, 3, 5).traverse(n => if (n % 2 == 0) None else Some(n)) = ${traversed}")
 }
