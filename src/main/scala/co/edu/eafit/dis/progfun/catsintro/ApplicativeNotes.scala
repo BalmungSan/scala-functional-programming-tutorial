@@ -1,10 +1,10 @@
 package co.edu.eafit.dis.progfun.catsintro
 
-import cats.Applicative // Import the Monad type class.
+import cats.Applicative // Import the Applicative type class.
 import cats.data.ValidatedNec // Import the Validated[NonEmptyChain[E], _] data type.
 import cats.instances.either._ // Brings the implicit Applicative[Either[E, _]] instance to scope.
 import cats.instances.option._ // Brings the implicit Applicative[Option[_]] instance to scope.
-import cats.syntax.apply._ // Provides the tupled and mapN operators.
+import cats.syntax.apply._ // Provides the tupled and mapN methods.
 import cats.syntax.option._ // Provides the option smart constructors.
 import cats.syntax.validated._ // Provides the validated smart constructors.
 
@@ -22,7 +22,7 @@ object ApplicativeNotes extends App {
   // We can map multiple values inside a context simultaneously,
   // using the map2 through map22 methods.
   val summed = Applicative[Option[?]].map3(1.some, 3.some, 5.some)(_ + _ + _)
-  println(s"Applicative[Option[?]].map3(1.some, 3.some, 5.some)(_ + _ + _) = ${summed}")
+  println(s"Applicative[Option[?]].map3(Some(1), Some(3), Some(5))(_ + _ + _) = ${summed}")
 
   // Cats provides convenient short hands versions of the tuple and map methods.
   val tupled = (1.some, "fun".some, true.some).tupled
