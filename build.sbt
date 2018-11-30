@@ -1,5 +1,5 @@
-//project settings
-name := "intro-cats"
+// Project settings.
+name := "Scala Functional Programming"
 organization := "co.edu.eafit.dis.progfun"
 version := "0.1.0"
 scalaVersion := "2.12.7"
@@ -23,17 +23,20 @@ scalacOptions ++= Seq(
   "-Ywarn-unused:params",
   "-Ywarn-unused:patvars",
   "-Ywarn-unused:privates",
+  "-Ywarn-value-discard",
   "-Dkp:genAsciiNames=true"
 )
 
+// Dependencies.
 val CatsVersion = "1.4.0"
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % CatsVersion
 )
 
+// Kind projector.
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")
 
-// Ammonite
+// Ammonite.
 libraryDependencies += "com.lihaoyi" % "ammonite" % "1.3.2" % "test" cross CrossVersion.full
 
 sourceGenerators in Test += Def.task {
