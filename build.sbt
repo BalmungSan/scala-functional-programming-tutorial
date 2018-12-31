@@ -2,7 +2,7 @@
 name := "Scala Functional Programming"
 organization := "co.edu.eafit.dis.progfun"
 version := "0.1.0"
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.8"
 scalacOptions ++= Seq(
   "-deprecation",
   "-encoding", "utf-8",
@@ -28,16 +28,16 @@ scalacOptions ++= Seq(
 )
 
 // Dependencies.
-val CatsVersion = "1.4.0"
+val CatsVersion = "1.5.0"
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % CatsVersion
 )
 
 // Kind projector.
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
 
 // Ammonite.
-libraryDependencies += "com.lihaoyi" % "ammonite" % "1.3.2" % "test" cross CrossVersion.full
+libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.0" % "test" cross CrossVersion.full
 
 sourceGenerators in Test += Def.task {
   val file = (sourceManaged in Test).value / "amm.scala"
