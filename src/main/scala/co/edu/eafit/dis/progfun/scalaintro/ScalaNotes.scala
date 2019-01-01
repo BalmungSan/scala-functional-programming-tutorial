@@ -30,17 +30,25 @@ object ScalaNotes extends App {
   //           Its value computation will be delayed until its first access,
   //           and will store it & return it on every other access.
   println("-- VAL - VAR - DEF - LAZY VAL --")
+  println("--- VAL ---")
   val value1 = { println("Inside VAL definition."); 0 }
+  println("VAL defined")
   println(s"VAL first access: ${value1}.")
   println(s"VAL second access: ${value1}.")
+  println("--- VAR ---")
   var value2 = { println("Inside VAR definition."); 1 }
+  println("VAR defined")
   value2 = { println("Insie VAR reassignment."); 2 }
   println(s"VAR first access: ${value2}.")
   println(s"VAR second access: ${value2}.")
+  println("--- DEF ---")
   def value3 = { println("Inside DEF definition."); 3 }
+  println("DEF defined")
   println(s"DEF first access: ${value3}.")
   println(s"DEF second access: ${value3}.")
+  println("--- LAZY VAL ---")
   lazy val value4 = { println("Inside LAZY VAL definition."); 5 }
+  println("LAZY VAL defined")
   println(s"LAZY VAL first access: ${value4}.")
   println(s"LAZY VAL second access: ${value4}.")
   println()
@@ -57,29 +65,43 @@ object ScalaNotes extends App {
   // Method definition.
   println("-- Functions & Methods --")
   def method(x: Int): Int = x + 1
-  println(s"Given def method(x: Int): Int = x + 1\t->\tmethod(3) = ${method(3)}")
-  // Anonymous function syntax.
+  println(s"Given method(x: Int): Int = x + 1\t->\tmethod(3) = ${method(3)}")
+  // Anonymous function.
   val anonymous = (x: Int, y: Int) => x + y
-  println(s"Given val anonymous = (x: Int, y: Int) => x + y\t->\tanonymous(3, 5) = ${anonymous(3, 5)}")
-  // Higher order functions.
+  println(s"Given anonymous = (x: Int, y: Int) => x + y\t->\tanonymous(3, 5) = ${anonymous(3, 5)}")
+  // Higher order function.
   def higher(x: Int, f: Int => Int): Int = f(x + 1)
-  println(s"Given def higher(x: Int, f: Int => Int): Int = f(x + 1)\t->\thiger(3, x => x) = ${higher(3, x => x)}")
+  println(s"Given higher(x: Int, f: Int => Int): Int = f(x + 1)\t->\thiger(3, x => x) = ${higher(3, x => x)}")
   // Curryfied function.
   def curryfied(x: Int)(y: Int): Int = x + y
   val add3: Int => Int = curryfied(3)
-  println(s"Given def curryfied(x: Int)(y: Int): Int = x + y & add3 = curryfied(3)\t->\tadd3(5) = ${add3(5)}")
+  println(s"Given curryfied(x: Int)(y: Int): Int = x + y & add3 = curryfied(3)\t->\tadd3(5) = ${add3(5)}")
   // Recursive function.
   def fact(n: Long): Long =
     if (n == 0) 0 else n * fact(n - 1)
-  println(s"Given def fact(n: Long): Long = if (n == 0) 0 else n * fact(n - 1)\t->\tfact(5) = ${fact(5)}")
-  // Tail-recursive functions.
+  println(s"Given fact(n: Long): Long = if (n == 0) 0 else n * fact(n - 1)\t->\tfact(5) = ${fact(5)}")
+  // Tail-recursive function.
   def tailFact(n: Long) = {
     @tailrec
     def loop(n: Long, acc: Long): Long =
       if (n == 0) acc else loop(n - 1, acc * n)
     loop(n, 1)
   }
-  println(s"Given  def tailFact(n: Long): Long = loop(n, 1) & def loop(n: Long, acc: Long): Long = if (n == 0) acc else loop(n - 1, acc * n)\t->\t tailFact(50) = ${tailFact(50)}")
+  println(s"Given tailFact(n: Long): Long = loop(n, 1) & def loop(n: Long, acc: Long): Long = if (n == 0) acc else loop(n - 1, acc * n)\t->\t tailFact(50) = ${tailFact(50)}")
+  // Varargs parameter function.
+  def sumAll(nums: Int*): Int = nums.sum
+  println(s"Given sumAll(nums: Int*): Int = nums.sum\t->\tsumAll(1, 2, 3) = ${sumAll(1, 2, 3)}")
+  // By-Name parameter function.
+  def runOnlyIf(messageBlock: => String, run: Boolean = true): String =
+    if (run)
+      messageBlock
+    else
+      "Not execute!"
+  def executed = runOnlyIf({ println("Executed"); "Hello, World!" })
+  def notExecuted = runOnlyIf({ println("Executed"); "Hello, World!" }, run = false)
+  println("Given runOnlyIf(messageBlock: => String, run: Boolean = true): String = if (run) messageBlock else 'Not execute!'")
+  println(s"\trunOnlyIf({ println('Executed'); 'Hello, World!' }) = ${executed}")
+  println(s"\trunOnlyIf({ println('Executed'); 'Hello, World!' }, run = false) = ${notExecuted}")
   println()
 
   // Collections!
@@ -164,6 +186,12 @@ object ScalaNotes extends App {
   // foldLeft (list only) - reduces the elements of a list by applying a combine function from left to right.
   val reduced = List(1, 2, 3).foldLeft(0)(_ + _)
   println(s"List(1, 2, 3).foldLeft(0)(_ + _) = ${reduced}")
+  // sum - shortcut for summing together all elements in a collection.
+  val summed = List(1, 2, 3).sum
+  println(s"List(1, 2, 3).sum = ${summed}")
+  // mkString - formats a collection as a String.
+  val formatted = List(1, 2, 3).mkString(start = "[", sep = ", ", end = "]")
+  println(s"List(1, 2, 3).mkString('[', ', ', ']') = ${formatted}")
   // For comprehension!
   // It is nice syntax for map, flatMap and filter.
   println("--- For Comprehension ---")
@@ -356,4 +384,38 @@ object ScalaNotes extends App {
     case User(name, age) => age
   }
   println(s"Given getUserAge(user: User): Int = user match { case User(_, age) => age }\t->\tgetUserAge(user1) = ${getUserAge(user1)}")
+  // Case objects and ADTs
+  // A case object is a used to ensure only one instance
+  // of a case class with no arguments.
+  // Algebraic Data Types are types formed by combining other types.
+  // In Scala, ADTs are usually encoded using sealed traits and case classes/objects.
+  // A sealed trait is a trait who can only be extended in the same file.
+  // This allow us to have exhaustive pattern matching.
+  // For showing this, lets define our own Option type,
+  // which we will call Maybe (in honor to the Haskell one).
+  println("--- Case objects & ADTs ---")
+  sealed trait Maybe[+T] {
+    final def getOrElse[S >: T](default: => S): S = this match {
+      case Just(t) => t
+      case Nothing => default
+    }
+  }
+  final case class Just[T](value: T) extends Maybe[T]
+  case object Nothing extends Maybe[Nothing]
+  println(
+    """sealed trait Maybe[+T] {
+      |  final def getOrElse[S >: T](default: => S): S = this match {
+      |    case Just(t) => t
+      |    case Nothing => default
+      |  }
+      |}
+      |final case class Just[T](value: T) extends Maybe[T]
+      |case object Nothing extends Maybe[Nothing]""".stripMargin
+  )
+  val maybe1: Maybe[Int] = Just(10)
+  val get1 = maybe1.getOrElse(default = 0)
+  println(s"Given maybe1 = Just(10)\t->\tmaybe1.getOrElse(0) = ${get1}")
+  val maybe2: Maybe[Int] = Nothing
+  val get2 = maybe2.getOrElse(default = 0)
+  println(s"Given maybe2 = Nothing\t->\tmaybe2.getOrElse(0) = ${get2}")
 }
