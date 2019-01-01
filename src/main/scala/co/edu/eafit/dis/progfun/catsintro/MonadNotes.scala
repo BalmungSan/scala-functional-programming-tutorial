@@ -17,6 +17,9 @@ import cats.syntax.flatMap.toFlatMapOps // Provides the flatMap operator for map
 import scala.language.higherKinds // Enable the use of higher-kinded types, like F[_].
 
 object MonadNotes extends App {
+  println("- Monad -")
+  println("-- The flatMap function --")
+
   // FlatMap allow us to sequence computations inside a context...
   // However, unlike map, they are aware of inner contexts.
   val flatMapped1 = List(1, 2, 3).flatMap(x => List.fill(x)(x)) // Returns a list of x elements, each of value x.
@@ -32,12 +35,14 @@ object MonadNotes extends App {
   // This common behavior is encapsulated in the Monad[F[_]] type class.
   val assertion1 = List(1, 2, 3).flatMap(x => List.fill(x)(x)) === Monad[List].flatMap(List(1, 2, 3))(x => List.fill(x)(x))
   println(s"List(1, 2, 3).flatMap(x => List.fill(x)(x)) === Monad[List].flatMap(List(1, 2, 3))(x => List.fill(x)(x)) is ${assertion1}")
+  println()
 
   // Monad laws!
-  // A correct implementation of a Functor for some type F[_] must satisfy three laws:
+  // A correct implementation of a Monad for some type F[_] must satisfy three laws:
   // Left identity: Calling pure on x and transforming the result with f is the same as calling f(x).
   // Right identity: Passing pure to flatMap is the same as doing nothing.
   // Associativity: FlatMapping over two functions f and g is the same as flatMapping over f and then flatMapping over g.
+  println("-- Monad laws --")
   val x: Int = 3
   val xPure: List[Int] = Monad[List].pure(x)
   val f: Int => List[Int] = _ => List(1, 2, 3)
@@ -48,11 +53,13 @@ object MonadNotes extends App {
   println(s"Given f = _ => List(1, 2, 3)\t->\tMonad[List].pure(3).flatMap(f) === f(3) is ${assertion2}")
   println(s"List(3).flatMap(Monad[List].pure) === List(3) is ${assertion3}")
   println(s"Given f = _ => List(1, 2, 3) & g = x => List.fill(x)(x)\t->\t List(3).flatMap(f).flatMap(g) === List(3).flatMap(x => f(x).flatMap(g)) is ${assertion4}")
+  println()
 
-  // Monad for options.
-  // Lets define our own Monad for Options.
+  // Monad for options!
+  // Let's define our own Monad for Options.
   // BTW, every monad is also a Functor,
   // lest implement the abstract method map too.
+  println("-- Monad for options --")
   implicit val OptionMonad: Monad[Option] = new Monad[Option] {
     override def pure[A](a: A): Option[A] = Some(a)
     override def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] = fa match {
@@ -63,36 +70,46 @@ object MonadNotes extends App {
     override def tailRecM[A, B](a: A)(f: A => Option[Either[A, B]]): Option[B] = ???
   }
   val tenDividedSafe: Int => Option[Int] = x => if (x == 0) None else Some(10 / x)
+  println(s"Given tenDividedSafe = x => if (x == 0) None else Some(10 / x)")
   val flatMapped3 = OptionMonad.flatMap(Some(3))(tenDividedSafe)
   val flatMapped4 = OptionMonad.flatMap(Some(0))(tenDividedSafe)
-  println(s"Given tenDividedSafe = x => if (x == 0) None else Some(10 / x)\t->\tMonad[Option]flatMap(Some(3))(tenDividedSafe) = ${flatMapped3}")
-  println(s"Given tenDividedSafe = x => if (x == 0) None else Some(10 / x)\t->\tMonad[Option]flatMap(Some(0))(tenDividedSafe) = ${flatMapped4}")
+  val flatMapped5 = OptionMonad.flatMap(None)(tenDividedSafe)
+  println(s"\tMonad[Option].flatMap(Some(3))(tenDividedSafe) = ${flatMapped3}")
+  println(s"\tMonad[Option].flatMap(Some(0))(tenDividedSafe) = ${flatMapped4}")
+  println(s"\tMonad[Option].flatMap(None)(tenDividedSafe)    = ${flatMapped5}")
+  println()
 
-  // We can use the Monad type class to write a generic method
-  // That computes the square sum of two values
+  // Generic functions!
+  // We can use the Monad typeclass to write a generic function
+  // that computes the square sum of two values
   // inside two instances of the same context.
+  println("-- Generic functions using Monad --")
   def sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] =
     for {
       x <- fa
       y <- fb
     } yield ((x * x) + (y * y))
-  val flatMapped5 = sumSquare[Option](Some(3), Some(5))
-  val flatMapped6 = sumSquare[Option](Some(3), None)
-  val flatMapped7 = sumSquare(List(1, 2, 3), List(0, 5, 10))
-  println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(Some(3), Some(5)) = ${flatMapped5}")
-  println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(Some(3), None) = ${flatMapped6}")
-  println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(List(1, 2, 3), List(0, 5, 10)) = ${flatMapped7}")
+  println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))")
+  val flatMapped6 = sumSquare[Option](Some(3), Some(5))
+  val flatMapped7 = sumSquare[Option](Some(3), None)
+  val flatMapped8 = sumSquare(List(1, 2, 3), List(0, 5, 10))
+  println(s"\tsumSquare(Some(3), Some(5)) = ${flatMapped6}")
+  println(s"\tsumSquare(Some(3), None) = ${flatMapped7}")
+  println(s"\tsumSquare(List(1, 2, 3), List(0, 5, 10)) = ${flatMapped8}")
 
   // Identity Monad!
   // The Id[_] cats' data type, is a convenient wrapper of a plain type T
   // To use pure values in monadic computations.
+  println("--- Id Monad ---")
   val a = Monad[Id].pure(3)
   val b = Monad[Id].pure(5)
-  val flatMapped8 = sumSquare(a, b)
-  println(s"Given sumSquare[F[_]: Monad](fa: F[Int], fb: F[Int]): F[Int] = for (x <- fa; y <- fb) yield ((x * x) + (y * y))\t->\t sumSquare(3, 5) = ${flatMapped8}")
+  val flatMapped9 = sumSquare(a, b)
+  println(s"\tsumSquare(3, 5) = ${flatMapped9}")
+  println()
 
   // Monad Error!
   // The monad error provides a better abstraction for Either-like data types, which are used for error handling.
+  println("-- Monad Error --")
   val EitherMonadError = MonadError[Lambda[A => Either[String, A]], String]
   val success = EitherMonadError.pure(42)
   println(s"MonadError[Either[String, _], String].pure(42) = ${success}")
@@ -102,6 +119,7 @@ object MonadNotes extends App {
   println(s"EitherMonadError.handleErrorWith(failure) { case 'Kabum!' => EitherMonadError.pure(0); case _ => EitherMonadError.raiseError('Unexpected error') } = ${recovered}")
   val ensured = EitherMonadError.ensure(success)("Number too low")(_ >= 50)
   println(s"EitherMonadError.ensure(success)('Number too low')(_ >= 50) = ${ensured}")
+  println()
 
   // Eval Monad!
   // The eval monad abstracts over different models of evaluation.
@@ -110,19 +128,23 @@ object MonadNotes extends App {
   // and aren't run until we ask for the Eval's value - also those two methods
   // are trampolined, that means, they are stack safe.
   // Additionally, the defer method allow us to defer the evaluation of an Eval.
+  println("-- Eval Monad --")
   val it = List(1, 2, 3, 4, 5).toIterator
+  println(s"Given it = 1 to 5")
   val now = Eval.now(it.next())
-  println(s"Given it = 1 to 5\t->\tNow = ${now}, value1 = ${now.value}, value2 = ${now.value}")
+  println(s"\tNow = ${now}, value1 = ${now.value}, value2 = ${now.value}")
   val latter = Eval.later(it.next())
-  println(s"Given it = 1 to 5\t->\tLatter = ${latter}, value1 = ${latter.value}, value2 = ${latter.value}")
+  println(s"\tLatter = ${latter}, value1 = ${latter.value}, value2 = ${latter.value}")
   val always = Eval.always(it.next())
-  println(s"Given it = 1 to 5\t->\tAlways = ${always}, value1 = ${always.value}, value2 = ${always.value}")
+  println(s"\tAlways = ${always}, value1 = ${always.value}, value2 = ${always.value}")
   def safeFactorial(n: BigInt): Eval[BigInt] = if (n == 1) Eval.now(1) else Eval.defer(safeFactorial(n - 1).map(_ * n))
   val safeComputed = safeFactorial(50000).value.toString.substring(0, 5) // Cap the string, the real number is very long to print
   println(s"Given safeFactorial = n => if (n == 1) Eval.now(1) else Eval.defer(safeFactorial(n - 1).map(_ * n))\t->\tsafeFactorial(50000) = ${safeComputed}...")
+  println()
 
   // Writer Monad!
   // The writer monad lets us carry a log along with a computation.
+  println("-- Writer Monad --")
   type Logged[A] = Writer[List[String], A]
   def loggedFacotrial(n: Int): Logged[Int] = for {
     ans <- if (n == 1) Writer.value[List[String], Int](1) else loggedFacotrial(n - 1)
@@ -130,13 +152,16 @@ object MonadNotes extends App {
   } yield ans
   val (log, value) = loggedFacotrial(5).run
   println(s"Given loggedFacotrial = n => for (ans <- if (n == 1) Writer.value(1) else loggedFacotrial(n - 1); _ <- Writer.tell(List(s'fact $${n}, $${ans}'))) yield ans\t->\tloggedFacotrial(5), log = ${log}, value = ${value}")
+  println()
 
   // Reader Monad!
   // The reader monad is useful to compose computations which have a common dependency.
   // This way, we can inject the dependency at the end to run the computation.
   // This design, combined with Dependency Injection Principle (D in SOLID),
   // leads to software that is easier to unit-test.
+  println("-- Reader Monad --")
   final case class Cat(name: String, favoriteFood: String)
+  println("final case class Cat(name: String, favoriteFood: String)")
   val greetCat: Reader[Cat, String] = Reader(cat => s"Hello, ${cat.name}!")
   val feedCat: Reader[Cat, String] = Reader(cat => s"Have a nice bowl of ${cat.favoriteFood}")
   val greetAndFeedCat: Reader[Cat, String] = for {
@@ -145,10 +170,12 @@ object MonadNotes extends App {
   } yield s"${greet}\t${feed}."
   val cat = Cat("Garfield", "lasagne")
   println(s"Given greetCat = Reader(cat => s'Hello, $${cat.name}!'), eedCat = Reader(cat => s'Have a nice bowl of ${cat.favoriteFood}'), greetAndFeedCat = for (greet <- greetCat; feed <- feedCat) yield s'$${greet}\t$${feed}.' & cat = Cat('Garfield', 'lasagne')\t->\tgreetAndFeedCat(cat) = ${greetAndFeedCat(cat)}")
+  println()
 
   // State Monad!
   // The state monad model a mutable state in a purely functional way,
   // which allow us to read and modify a shared state trough computations.
+  println("-- State Monad --")
   type Stack[A] = List[A]
   type CalcState[R] = State[Stack[R], R]
   import Fractional.Implicits.infixFractionalOps
@@ -172,18 +199,20 @@ object MonadNotes extends App {
   def evalInput[R: Fractional](input: String): R =
     evalAll(symbols = input.split(" ")).runA(Nil).value
   println(s"evalInput('5 1 2 + 3 * /') = ${evalInput[Double]("5 1 2 + 3 * /")}")
+  println()
 
-  // Monad Transformers!
+  // Monad transformers!
   // Transformers allow us to compose two monads together.
   // However, since is impossible to compose any two monads generally,
   // the transformer must know something about at least one monad (in this case the inner most).
   // Thus, there must be one transformer for each monad we would like to compose
   // with any other arbitrary outer monad.
+  println("-- Monad transformers --")
   val eitherOptionA = OptionT.pure[Either[String, ?]](10)
   val eitherOptionB = OptionT.pure[Either[String, ?]](30)
-  val flatMapped9 = for {
+  val flatMapped10 = for {
     a <- eitherOptionA
     b <- eitherOptionB
   } yield a + b
-  println(s"Given fa = OptionT.pure[Either[String, ?]](10), fb = OptionT.pure[Either[String, ?]](40)\t->\tfor (a <- fa; b <- fb) yield a + b = ${flatMapped9.value}")
+  println(s"Given fa = OptionT.pure[Either[String, ?]](10), fb = OptionT.pure[Either[String, ?]](40)\t->\tfor (a <- fa; b <- fb) yield a + b = ${flatMapped10.value}")
 }

@@ -9,6 +9,9 @@ import cats.syntax.option._ // Provides the option smart constructors.
 import cats.syntax.validated._ // Provides the validated smart constructors.
 
 object ApplicativeNotes extends App {
+  println("- Applicatives & Validated -")
+  println("-- Applicateives --")
+
   // Applicative allow us to join values inside a context,
   // in a less restrictive way than Monad's flatMap.
   // For example, the product method takes a F[A] and a F[B]
@@ -28,30 +31,35 @@ object ApplicativeNotes extends App {
   val tupled = (1.some, "fun".some, true.some).tupled
   println(s"(Some(1), Some('fun'), Some(true)).tupled = ${tupled}")
   final case class Cat(name: String, born: Int, isMale: Boolean)
+  println("final case class Cat(name: String, born: Int, isMale: Boolean)")
   val mapped =
     (
       "BalmungSan".some,
       1997.some,
       None
-    ).mapN(Cat.apply)
-  println(s"(Some('BalmungSan'), Some(1997), None).mapN(Cat.apply) = ${mapped}")
+    ).mapN(Cat) // The Cat's constructor itself is a function.
+  println(s"(Some('BalmungSan'), Some(1997), None).mapN(Cat) = ${mapped}")
+  println()
 
-  // Applicative and Monads.
+  // Applicatives and Monads.
   // To ensure consistent semantics, Cats’ Monad provides a standard definition
   // of product in terms of map and flatMap.
   // `def product[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A, B)] = fa.flatMap(a => fb.map(b => (a, b)))`
   // This gives what we might think of as unexpected and less useful behavior
   // for a number of data types - for example Either.
+  println("-- Applicatives & Monads --")
   val eitherErrors =
     Applicative[Either[List[String], ?]].product(
       Left(List("Error 1")),
       Left(List("Error 2"))
     )
   println(s"Applicative[Either[List[String], ?]].product(Left(List('Error 1')), Left(List('Error 2'))) = ${eitherErrors}")
+  println()
 
   // Validated!
   // Validated is a cats' Data Type similar to Either that has an instance of Applicative,
   // but no instance of Monad. Thus, the implementation of product is free to accumulate errors.
+  println("-- Validated --")
   val validatedErrors =
     Applicative[ValidatedNec[String, ?]].tuple3(
       "Error 1".invalidNec,

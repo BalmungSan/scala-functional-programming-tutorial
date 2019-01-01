@@ -5,7 +5,9 @@ import scala.annotation.tailrec
 object ScalaNotes extends App {
   // This a very brief introduction to the basic elements of the language.
   // For a more detailed and complete introduction refer to the Scala Tour.
-  println("Hello, World!") // Traditions matter!
+  println("- Scala Introduction! -")
+  println("Hello, World! - Traditions matter!")
+  println()
 
   // Values & Declarations!
   // When declaring a new value in you program, scala provides you
@@ -25,8 +27,9 @@ object ScalaNotes extends App {
   //      A definition may take arguments, which make them ideal for
   //      defining methods.
   // LAZY VAL: A lazy val is an immutable lazy cached value.
-  //      Its value computation will be delayed until its first access,
-  //      and will store it & return it on every other access.
+  //           Its value computation will be delayed until its first access,
+  //           and will store it & return it on every other access.
+  println("-- VAL - VAR - DEF - LAZY VAL --")
   val value1 = { println("Inside VAL definition."); 0 }
   println(s"VAL first access: ${value1}.")
   println(s"VAL second access: ${value1}.")
@@ -40,6 +43,7 @@ object ScalaNotes extends App {
   lazy val value4 = { println("Inside LAZY VAL definition."); 5 }
   println(s"LAZY VAL first access: ${value4}.")
   println(s"LAZY VAL second access: ${value4}.")
+  println()
 
   // Functions & Methods!
   // Functions and Methods are expressions that take parameters,
@@ -51,6 +55,7 @@ object ScalaNotes extends App {
   // to the 'Difference between method and function in Scala'
   // StackOverflow post.
   // Method definition.
+  println("-- Functions & Methods --")
   def method(x: Int): Int = x + 1
   println(s"Given def method(x: Int): Int = x + 1\t->\tmethod(3) = ${method(3)}")
   // Anonymous function syntax.
@@ -75,6 +80,7 @@ object ScalaNotes extends App {
     loop(n, 1)
   }
   println(s"Given  def tailFact(n: Long): Long = loop(n, 1) & def loop(n: Long, acc: Long): Long = if (n == 0) acc else loop(n - 1, acc * n)\t->\t tailFact(50) = ${tailFact(50)}")
+  println()
 
   // Collections!
   // Collections are data structures that abstract away multiplicity.
@@ -85,6 +91,8 @@ object ScalaNotes extends App {
   // Immutable / Mutable & Serial / Parallel.
   // We will look only to the three most common of
   // the immutable-serial group: Lists, Sets & Maps.
+  println("-- Collections --")
+  println("--- List - Set - Map ---")
   // List - Ordered collection of elements of the same type.
   //        You can efficiently traverse it in a head-tail fashion.
   val list = List(1, 2, 3)
@@ -104,10 +112,12 @@ object ScalaNotes extends App {
   println(s"Map('a' -> 1, 'e' -> 2, 'i' -> 3, 'o' -> 4, 'u' -> 5) = ${map}")
   println(s"Given map = Map('a' -> 1, 'e' -> 2, 'i' -> 3, 'o' -> 4, 'u' -> 5)\t->\tmap.get('a') = ${map.get('a')} & map.get('b') = ${map.get('b')}")
   // Common methods on collections!
-  // Note that all this methods return a new Collection
+  // Note that all this methods return a new collection
   // with the applied transformation, instead of mutating
   // the original collection.
+  //
   // reverse (list only) - reverse the elements of a list.
+  println("--- Common collection's methods ---")
   val reversed = List(1, 2, 3).reverse
   println(s"List(1, 2, 3).reverse = ${reversed}")
   // sort (list only) - sorts the elements of a list.
@@ -154,8 +164,9 @@ object ScalaNotes extends App {
   // foldLeft (list only) - reduces the elements of a list by applying a combine function from left to right.
   val reduced = List(1, 2, 3).foldLeft(0)(_ + _)
   println(s"List(1, 2, 3).foldLeft(0)(_ + _) = ${reduced}")
-  // For Comprehension!
+  // For comprehension!
   // It is nice syntax for map, flatMap and filter.
+  println("--- For Comprehension ---")
   val distinctTuples = for {
     x <- 0 to 3 //  Desugared as a flatMap.
     y <- 0 to 3 //  Desugared as a flatMap.
@@ -165,13 +176,16 @@ object ScalaNotes extends App {
   // Note: There are many other collections, including immutable indexed
   //       Vectors and mutable (fast) Arrays, and methods to transform them.
   //       These were only the most basic and common ones.
+  println()
 
   // Classes, Objects & Traits.
   // Classes object and traits allow us to define new types.
+  println("-- Classes - Objects - Traits --")
   // Classes.
   // A class is a blueprint for creating objects,
   // they usually consist of fields (data)
   // and methods (behaviors) that represent an entity.
+  println("--- Classes ---")
   class Point(val x: Double, val y: Double) {
     def distance(that: Point): Double =
       math.sqrt(math.pow(this.x - that.x, 2) + math.pow(this.y - that.y, 2))
@@ -189,6 +203,7 @@ object ScalaNotes extends App {
   // Objects.
   // Objects are a shortcut for implementing the Singleton pattern
   // They are like classes with only one instance, theyself.
+  println("--- Objects ---")
   object NumChecker {
     def isOdd(x: Int): Boolean =
       (x % 2) != 0
@@ -223,6 +238,7 @@ object ScalaNotes extends App {
   // They can not have parameters (constructor).
   // They may provide default implementations for their fields and methods.
   // (They are similar to Java 8 interfaces with default implementations).
+  println("--- Traits  ---")
   trait Iterator[T] {
     def hasNext: Boolean
     def next(): Option[T]
@@ -262,6 +278,7 @@ object ScalaNotes extends App {
   val secondIteration = toOne.next()
   val thirdIteration = toOne.next()
   println(s"Given toOne = new IntIterator(to = 1)\t->\t toOne.next() = ${firstIteration} & toOne.next() = ${secondIteration} & toOne.next() = ${thirdIteration}")
+  println()
 
   // Pattern matching!
   // Pattern matching is a mechanism for checking a value against a pattern.
@@ -270,6 +287,7 @@ object ScalaNotes extends App {
   // Note: The following example is only to show all things
   //       you can do on a pattern matching,
   //       but you should never write a function that accepts an Any.
+  println("-- Pattern matching --")
   final val Constant: Int = 10
   def patternMatch(x: Any, y: Any = 0): String = x match {
     case 0                      => "Int Zero" // Simple value match.
@@ -305,11 +323,14 @@ object ScalaNotes extends App {
   println(s"patternMatch(List(1, 2, 3)) = ${match6}")
   val match7 = patternMatch(3)
   println(s"patternMatch(3) = ${match7}")
+  println()
 
-  // Case Classes & Case Objects!
+  // Case classes & Case objects!
+  println("-- Case Classes & Case objects --")
   // Case classes are like regular classes with a few differences
   // which make them perfect for modeling simple and immutable data structures.
   // (They are similar to a POJO, but with a lot of boilerplate reduced)
+  println("--- Case classses ---")
   final case class User(name: String, age: Int)
   println("final case class User(name: String, age: Int)")
   // This one-line-declaration has given us:
