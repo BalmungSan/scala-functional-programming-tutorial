@@ -323,18 +323,20 @@ object ScalaNotes extends App {
     case `y`                    => "Y" // Variable match.
     case boolean: Boolean       => "Boolean" // Type match.
     case int: Int if (int > 10) => "Int greater than ten" // Guard match.
-    case x :: xs                => s"List with head: ${x} & tail: ${xs}" // Structure match.
+    case x :: xs                => s"List with head: ${x} & tail: ${xs}" // Structure match - List.
+    case (x, y, z)              => s"Tuple3: (${x}, ${y}, ${z})" // Structure match - Tuples.
     case _                      => "Other thing" // Default match.
   }
   println(
     """def patternMatch(x: Any, y: Any = 0): String = x match {
-      |  case 0                      => "Int Zero" // Simple value match.
-      |  case Constant               => "Int 10" // Constant match.
-      |  case `y`                    => "Y" // Variable match.
-      |  case boolean: Boolean       => "Boolean" // Type match.
-      |  case int: Int if (int > 10) => "Int greater than ten" // Guard match.
-      |  case x :: xs                => s"List with head: ${x} & tail: ${xs}" // Structure match.
-      |  case _                      => "Other thing" // Default match.
+      |  case 0                      => 'Int Zero' // Simple value match.
+      |  case Constant               => 'Int 10' // Constant match.
+      |  case `y`                    => 'Y' // Variable match.
+      |  case boolean: Boolean       => 'Boolean' // Type match.
+      |  case int: Int if (int > 10) => 'Int greater than ten' // Guard match.
+      |  case x :: xs                => s'List with head: ${x} & tail: ${xs}' // Structure match.
+      |  case (x, y, z)              => s'Tuple3: (${x}, ${y}, ${z})' // Structure match - Tuples.
+      |  case _                      => 'Other thing' // Default match.
       |}""".stripMargin
   )
   val match1 = patternMatch(0)
@@ -349,8 +351,14 @@ object ScalaNotes extends App {
   println(s"patternMatch(100) = ${match5}")
   val match6 = patternMatch(List(1, 2, 3))
   println(s"patternMatch(List(1, 2, 3)) = ${match6}")
-  val match7 = patternMatch(3)
-  println(s"patternMatch(3) = ${match7}")
+  val match7 = patternMatch((1, 2, 3))
+  println(s"patternMatch((1, 2, 3)) = ${match7}")
+  val match8 = patternMatch(3)
+  println(s"patternMatch(3) = ${match8}")
+  // You can also pattern match agains regexp
+  // For more information read:
+  //     https://www.scala-lang.org/api/current/scala/util/matching/Regex.html
+  //     https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html
   println()
 
   // Case classes & Case objects!
