@@ -6,17 +6,19 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
 
 ## Contents
 
-1. `scalaintro` This package contains notes for introduction to the **Scala** Programming Language. _(pending)_
+1. `scalaintro` This package contains notes for introduction to the **Scala** Programming Language.
     1. `ScalaNotes.scala` Basic introduction to the language.
     2. `ImplicitsNotes.scala` Introduction to the implicits mechanism of **Scala** _(includes ValueClasses too)_.
     3. `SubtypeNotes.scala` Variance, Type bounds & Generalized type constraints.
+    4. `TypeclassesNotes.scala` Simple introduction to the typeclass pattern in **Scala**.
 2. `catsintro` This package contains notes for introduction to the **Cats** library for Functional Programming.
     1. `MonoidNotes.scala` Semigroup & Monoid notes.
     2. `FunctorNotes.scala` Covariant, Contravariant & Invariant Functor notes.
     3. `MonadNotes.scala` Monad notes - Id, Error, Eval, Writer, Reader & State Monads notes - Monad Transformers notes.
     4. `ApplicativeNotes.scala` Applicative & Validated notes.
     5. `TraverseNotes.scala` Foldable & Traverse notes.
-3. `iointro` This package contains notes for introduction to the **Cats-Effect** library for Effects. _(pending)_
+3. `catscases` This packages contains the solutions to case studies of **Scala with Cats** book. _(pending)_
+4. `iointro` This package contains notes for introduction to the **Cats-Effect** library for Effects. _(pending)_
 
 ## Bibliography
 
@@ -27,6 +29,7 @@ The following is a list of bibliographic material used for this tutorial.
 + Typelevel - **Cats Effect**, Website. https://typelevel.org/cats-effect
 + Rob Norris _(tpolecat)_ - **Cats Infographic**, Image. https://github.com/tpolecat/cats-infographic
 + Rob Norris _(tpolecat)_ - **Functional Programming with Effects**, Conference. https://slideslive.com/38908886/functional-programming-with-effects
++ Rob Norris _(tpolecat)_ - **Introduction to Typeclasses in Scala**, Blog. https://tpolecat.github.io/2013/10/12/typeclass.html
 + Scala Lang - **Scala Standard Library - API**, Scaladoc. https://www.scala-lang.org/api/current
 + Scala Lang - **Tour of Scala**, Docs. https://docs.scala-lang.org/tour/tour-of-scala.html
 + Scala Lang - **Where Does Scala Look For Implicits?**, Docs. https://docs.scala-lang.org/tutorials/FAQ/finding-implicits.html
