@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 
 object ScalaNotes extends App {
   // This a very brief introduction to the basic elements of the language.
-  // For a more detailed and complete introduction refer to the Scala Tour.
+  // For a more detailed and complete introduction refer to the "Tour of Scala".
   println("- Scala Introduction! -")
   println("Hello, World! - Traditions matter!")
   println()

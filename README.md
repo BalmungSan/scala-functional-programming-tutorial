@@ -9,6 +9,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
 1. `scalaintro` This package contains notes for introduction to the **Scala** Programming Language. _(pending)_
     1. `ScalaNotes.scala` Basic introduction to the language.
     2. `ImplicitsNotes.scala` Introduction to the implicits mechanism of **Scala** _(includes ValueClasses too)_.
+    3. `SubtypeNotes.scala` Variance, Type bounds & Generalized type constraints.
 2. `catsintro` This package contains notes for introduction to the **Cats** library for Functional Programming.
     1. `MonoidNotes.scala` Semigroup & Monoid notes.
     2. `FunctorNotes.scala` Covariant, Contravariant & Invariant Functor notes.
@@ -32,4 +33,5 @@ The following is a list of bibliographic material used for this tutorial.
 + Scala Lang - **Value Classes**, Docs. https://docs.scala-lang.org/overviews/core/value-classes.html
 + Scala Lang - **Implicit Classes**, Docs. https://docs.scala-lang.org/overviews/core/implicit-classes.html
 + Daniel C. Sobral - **Difference between method and function in Scala**, StackOverflow Answer. https://stackoverflow.com/a/2530007/4111404
++ Erik Bruchez - **Generalized type constraints in Scala (without a PhD)**, Blog. https://blog.bruchez.name/2015/11/generalized-type-constraints-in-scala.html
 + Scala Community - **A relaxed chat room about all things Scala**, Gitter Channel. https://gitter.im/scala/scala
