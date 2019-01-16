@@ -73,7 +73,7 @@ object SubtypeNotes extends App {
       }
       this match {
         case Nil         => "List()"
-        case Cons(x, xs) => s"List(${loop(x.toString, remaining = this)})"
+        case Cons(x, xs) => s"List(${loop(x.toString, remaining = xs)})"
       }
     }
   }
@@ -81,9 +81,7 @@ object SubtypeNotes extends App {
   case object Nil extends List[Nothing]
   object List {
     def apply[T](elements: T*): List[T] = {
-      var result: List[T] = Nil
-      elements foreach { elem => result = Cons(head = elem, tail = result) }
-      result
+      if (elements.nonEmpty) Cons(head = elements.head, tail = List(elements.tail: _*)) else Nil
     }
   }
   println(
