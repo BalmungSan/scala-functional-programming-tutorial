@@ -235,9 +235,9 @@ object SubtypeNotes extends App {
   // Note: For more information read the "Generalized type constraints in Scala" Blog.
   println("- Generalized type constraint -")
   object TypeChecker {
-    def isSubType[A, B](a: A, b: B)(implicit ev: A <:< B = null): Boolean =
+    def isSubType[A, B](implicit ev: A <:< B = null): Boolean =
       Option(ev).fold(ifEmpty = false)(_ => true)
-    def isSameType[A, B](a: A, b: B)(implicit ev: A =:= B = null): Boolean =
+    def isSameType[A, B](implicit ev: A =:= B = null): Boolean =
       Option(ev).fold(ifEmpty = false)(_ => true)
   }
   println(
@@ -248,8 +248,8 @@ object SubtypeNotes extends App {
       |    Option(ev).fold(ifEmpty = false)(_ => true)
       |}""".stripMargin
   )
-  println(s"Int subtype of String is ${TypeChecker.isSubType(0, "")}")
-  println(s"Dog subtype of Pet is ${TypeChecker.isSubType(Dog(""), new Pet { val name = "" })}")
-  println(s"Dog sametype of Pet is ${TypeChecker.isSameType(Dog(""), new Pet { val name = "" })}")
-  println(s"Int sametype of Int is ${TypeChecker.isSameType(3, 5)}")
+  println(s"Int subtype of String is ${TypeChecker.isSubType[Int, String]}")
+  println(s"Dog subtype of Pet is ${TypeChecker.isSubType[Dog, Pet]}")
+  println(s"Dog sametype of Pet is ${TypeChecker.isSameType[Dog,Pet]}")
+  println(s"Int sametype of Int is ${TypeChecker.isSameType[Int, Int]}")
 }
