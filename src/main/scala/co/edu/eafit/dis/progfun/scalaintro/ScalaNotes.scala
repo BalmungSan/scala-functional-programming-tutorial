@@ -559,14 +559,14 @@ object ScalaNotes extends App {
   // For showing this, lets define our own Option type,
   // which we will call Maybe (in honor to the Haskell one).
   println("--- Case objects & ADTs ---")
-  sealed trait Maybe[+T] {
+  sealed trait Maybe[+T] extends Product with Serializable {
     final def getOrElse[S >: T](default: => S): S = this match {
       case Just(t) => t
       case Nothing => default
     }
   }
   final case class Just[T](value: T) extends Maybe[T]
-  case object Nothing extends Maybe[Nothing]
+  final case object Nothing extends Maybe[Nothing]
   println(
     """sealed trait Maybe[+T] {
       |  final def getOrElse[S >: T](default: => S): S = this match {

@@ -21,7 +21,7 @@ object SubtypeNotes extends App {
   //     There is only one instance of Null and it is null,
   //     it is the same null as from java, Nothing <: Null.
   println("- Subtyping -")
-  sealed trait Pet {
+  sealed trait Pet extends Product with Serializable {
     def name: String
   }
   final case class Dog(override val name: String) extends Pet
@@ -59,7 +59,7 @@ object SubtypeNotes extends App {
   // This makes sense because we can only use, but not modify, what is inside the List.
   // And since any A can be used where a B is expected, then it makes sense that
   // List[A] <: List[B].
-  sealed trait List[+A] {
+  sealed trait List[+A] extends Product with Serializable {
     def ::[B >: A](elem: B): List[B] =
       Cons(head = elem, tail = this)
     def map[R](f: A => R): List[R] = this match {
@@ -78,7 +78,7 @@ object SubtypeNotes extends App {
     }
   }
   final case class Cons[+T](head: T, tail: List[T]) extends List[T]
-  case object Nil extends List[Nothing]
+  final case object Nil extends List[Nothing]
   object List {
     def apply[T](elements: T*): List[T] = {
       if (elements.nonEmpty) Cons(head = elements.head, tail = List(elements.tail: _*)) else Nil
