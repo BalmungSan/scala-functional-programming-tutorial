@@ -129,7 +129,7 @@ object ImplicitsNotes extends App {
   // called implicitly by the compiler when you call a method a type does not have.
   // They may only take one non-implicit argument in their constructor,
   // and must be defined inside another object, class or trait.
-  // They are usually used to provide (extention) methods to existing types.
+  // They are usually used to provide (extension) methods to existing types.
   // Given they are only used for their methods, its type becomes irrelevant
   // as it is never used nor asked for. For that reason they are considered
   // safer and more controllable that implicit conversions.

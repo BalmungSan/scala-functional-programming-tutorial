@@ -170,7 +170,7 @@ object SubtypeNotes extends App {
   // which can store values of any type P as long as these are a subtype of Pet.
   println("-- Upper type bounds --")
   final case class PetContainer[P <: Pet](pet: P) {
-    val petName: String = pet.name // We can use any method defined in rhe Pet trait.
+    val petName: String = pet.name // We can use any method defined in the Pet trait.
   }
   println(
     """final case class PetContainer[P <: Pet](pet: P) {
@@ -192,7 +192,7 @@ object SubtypeNotes extends App {
   // As the name suggest, these are used to limit the generic parameter
   // to be a supertype of other type.
   // At first it seems that it is not useful at all,
-  // however it does has its utility when used together with other typeparamaters.
+  // however it does has its utility when used together with other type parameters.
   // For example, lets add a :: method to our List, that allows us to prepend
   // and element to the List.
   // At first we may think we could just write `def ::(elem: A): List[A]`

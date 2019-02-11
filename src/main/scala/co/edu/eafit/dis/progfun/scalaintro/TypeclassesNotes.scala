@@ -50,10 +50,10 @@ object TypeclassesNotes extends App {
   // and complexity, making it harder to maintain.
   println()
 
-  // Typeclasses are other technique for achieving polymorphism, they were first
-  // introduced in Haskell in the late 90's.
-  // Scala does not provide native support to typeclasses perse, but by abusing
-  // the implicits mechanism of the language we can implement them.
+  // Typeclasses are other technique for achieving polymorphism,
+  // they were first introduced in Haskell in the late 90's.
+  // Scala does not provide native support to typeclasses perse,
+  // but by abusing the implicits mechanism of the language we can implement them.
   // The idea of the typeclass pattern is to segregate the type definition
   // from the implementation of an interface for it.
   println("- Typeclass (ad-hoc polymorphism) -")
@@ -114,8 +114,7 @@ object TypeclassesNotes extends App {
   // Given the implementation of the typeclass for a type
   // is done separately from the type definition.
   // One can provide implementations of it for any type that is already defined.
-  // It is common that many users will need instances for common types
-  // from the standard library.
+  // It is common that many users will need instances for common types from the standard library.
   // We can save them the work of implementing them
   // by putting the instances in the companion object of the typeclass.
   // This way, these will always be in the implicit scope.
