@@ -1,9 +1,9 @@
 package co.edu.eafit.dis.progfun.scalaintro
 
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration.Inf
 import scala.util.{Either, Try}
-import scala.concurrent.{Await, ExecutionContext, Future, duration}
-import ExecutionContext.Implicits.global
-import duration.Duration.Inf
 
 object ScalaNotes extends App {
   // This a very brief introduction to the basic elements of the language.
@@ -81,24 +81,26 @@ object ScalaNotes extends App {
   println(s"Given curryfied(x: Int)(y: Int): Int = x + y & add3 = curryfied(3)\t->\tadd3(5) = ${add3(5)}")
   // Recursive functions.
   def fact(n: Long): Long =
-    if (n == 0) 0 else n * fact(n - 1)
+    if (n == 0) 1 else n * fact(n - 1)
   println(s"Given fact(n: Long): Long = if (n == 0) 0 else n * fact(n - 1)\t->\tfact(5) = ${fact(5)}")
   // Tail-recursive functions.
-  def tailFact(n: Long) = {
+  def tailFact(n: Long): BigInt = {
+    val zero = BigInt(0)
+    val one = BigInt(1)
     @annotation.tailrec
-    def loop(n: Long, acc: Long): Long =
-      if (n == 0) acc else loop(n - 1, acc * n)
-    loop(n, 1)
+    def loop(n: BigInt, acc: BigInt): BigInt =
+      if (n == zero) acc else loop(n - one, acc * n)
+    loop(BigInt(n), one)
   }
   println(
     """Given
-      |tailFact(n: Long): Long =
-      |  loop(n: Long, acc: Long): Long =
+      |tailFact(n: Long): BigInt =
+      |  loop(n: BigInt, acc: BigInt): BigInt =
       |    if (n == 0) acc else loop(n - 1, acc * n)
       |  loop(n, 1)
       |Then:""".stripMargin
   )
-  println(s"\ttailFact(50) = ${tailFact(50)}")
+  println(s"\ttailFact(500) = ${tailFact(500)}")
   // Varargs parameters.
   def sumAll(nums: Int*): Int = nums.sum
   println(s"Given sumAll(nums: Int*): Int = nums.sum\t->\tsumAll(1, 2, 3) = ${sumAll(1, 2, 3)}")
