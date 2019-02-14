@@ -176,6 +176,9 @@ object ScalaNotes extends App {
   // mapValues (map only) - applies the function only to the values and leaves the same key.
   val mappedValuesMap = Map('a' -> 1, 'b' -> 2, 'c' -> 3).mapValues(x => x + 1)
   println(s"Map('a' -> 1, 'b' -> 2, 'c' -> 3).mapValues(x => x + 1) = ${mappedValuesMap}")
+  // flatMap - applies a function to all elements of the collection, and then flatten the results.
+  val flatMappedList = List(1, 2, 3).flatMap(x => List.fill(n = x)(elem = x * 2))
+  println(s"List(1, 2, 3).flatMap(x => List.fill(n = x)(elem = x * 2)) = ${flatMappedList}")
   // filter - removes all elements that don't satisfy a predicate.
   val filteredList = List(1, 2, 3).filter(x => (x % 2) != 0)
   println(s"List(1, 2, 3).filter(x => (x % 2) != 0) = ${filteredList}")
