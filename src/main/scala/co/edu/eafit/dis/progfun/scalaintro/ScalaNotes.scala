@@ -2,7 +2,7 @@ package co.edu.eafit.dis.progfun.scalaintro
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration.Inf
+import scala.concurrent.duration.Duration
 import scala.util.{Either, Try}
 
 object ScalaNotes extends App {
@@ -272,17 +272,27 @@ object ScalaNotes extends App {
   // Either abstracts the possibility of returning two different things (but only one at the time),
   // it is commonly used to represent a computation that either produces a successful value or contains an error.
   // An Either[L, R] could be a Left(value: L) or a Right(value: R).
-  // (Convention is that the Left is always wrong and the Right is always Right).
+  // (Convention is that the Left is always wrong and the Right is always right).
   println("--- Either ---")
   // Returning an Either.
   type Dollars = Double
   type DuffCans = Int
-  def buyAlcohol(age: Int, money: Dollars): Either[String, DuffCans] =
-    if (age < 21) Left("Not allowed to drink") else Right((money / 5.0d).toInt)
+  def buyAlcohol(age: Int, money: Dollars): Either[String, (Int, DuffCans)] =
+    if (age < 21)
+      Left("Not allowed to drink")
+    else if (money <= 5.0d)
+      Left("Not enough money")
+    else
+      Right(age -> (money / 5.0d).toInt)
   println(
     """Given
       |buyAlcohol(age: Int, money: Dollars): Either[String, DuffCans] =
-      |  if (age < 21) Left('Not allowed to drink') else Right(money / 5)
+      |  if (age < 21)
+      |    Left('Not allowed to drink')
+      |  else if (money <= 5)
+      |    Left('Not enough money')
+      |  else
+      |    Right(age, money / 5)
       |Then:""".stripMargin
   )
   val cans1 = buyAlcohol(age   = 18, money = 30)
@@ -292,37 +302,38 @@ object ScalaNotes extends App {
   val cans3 = buyAlcohol(age   = 30, money = 60)
   println(s"\tbuyAlcohol(age = 30, money = 60) = ${cans3}")
   // Applying a safe transformation inside an Either.
-  def isDrunk(cans: DuffCans): (Boolean, DuffCans) = (cans > 10, cans)
+  def isDrunk(age: Int, cans: DuffCans): (Boolean, Int, DuffCans) =
+    (cans > 10, age, cans)
   println(
     """Given
-      |isDrunk(cans: DuffCans): (Boolean, DuffCans) =
-      |  (cans > 10, cans)
+      |isDrunk(age: Int, cans: DuffCans): (Boolean, DuffCans) =
+      |  (cans > 10, age, cans)
       |Then:""".stripMargin
   )
-  val isDrunk1 = cans1.map(isDrunk)
+  val isDrunk1 = cans1.map((isDrunk _).tupled)
   println(s"\tbuyAlcohol(age = 18, money = 30).map(isDrunk) = ${isDrunk1}")
-  val isDrunk2 = cans2.map(isDrunk)
+  val isDrunk2 = cans2.map((isDrunk _).tupled)
   println(s"\tbuyAlcohol(age = 21, money = 30).map(isDrunk) = ${isDrunk2}")
-  val isDrunk3 = cans3.map(isDrunk)
+  val isDrunk3 = cans3.map((isDrunk _).tupled)
   println(s"\tbuyAlcohol(age = 30, money = 60).map(isDrunk) = ${isDrunk3}")
   // Chaining unsafe transformations with Either.
-  def buyMore(isDrunk: Boolean, previousCans: DuffCans): Either[String, DuffCans] = {
+  def buyMore(isDrunk: Boolean, age: Int, previousCans: DuffCans): Either[String, (Int, DuffCans)] = {
     val bought =
       if (isDrunk)
-        buyAlcohol(age   = 15, money = 0)
+        buyAlcohol(age, money = 0)
       else
-        buyAlcohol(age   = 21, money = 20)
-    bought.map(newCans => previousCans + newCans)
+        buyAlcohol(age, money = 20)
+    bought.map { case (age, newCans) => age -> (previousCans + newCans) }
   }
   println(
     """Given
-      |buyMore(isDrunk: Boolean, previousCans: DuffCans): Either[String, DuffCans] =
+      |buyMore(isDrunk: Boolean, age: Int, previousCans: DuffCans): Either[String, (Int, DuffCans)] =
       |  val bought =
       |    if (isDrunk)
-      |      buyAlcohol(age   = 15, money = 0)
+      |      buyAlcohol(age, money = 0)
       |    else
-      |      buyAlcohol(age   = 21, money = 20)
-      |  bought.map(newCans => previousCans + newCans)
+      |      buyAlcohol(age, money = 20)
+      |  bought.map((age, newCans) => (age, previousCans + newCans))
       |Then:""".stripMargin
   )
   val buyMore1 = isDrunk1.flatMap((buyMore _).tupled)
@@ -360,7 +371,7 @@ object ScalaNotes extends App {
   val f3 = f2.flatMap(v => Future { Thread.sleep(3000); v * 10 })
   println(s"Future { Thread.sleep(1000); 3 } map { v => v + 5 } flatMap { v => Future { Thread.sleep(3000); v * 10 } } = ${f3}")
   // Await for a Future completion.
-  val result = Await.result(awaitable = f3, atMost = Inf)
+  val result = Await.result(awaitable = f3, atMost = Duration.Inf)
   println(s"Await Future { Thread.sleep(1000); 3 } map { v => v + 5 } flatMap { v => Future { Thread.sleep(3000); v * 10 } } = ${result}")
   //
   // Note: Together with collections,
