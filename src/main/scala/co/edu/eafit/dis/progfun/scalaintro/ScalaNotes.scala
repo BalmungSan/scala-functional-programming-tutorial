@@ -560,7 +560,7 @@ object ScalaNotes extends App {
   val user2 = User(name = "Luis Miguel", age = 22)
   println(s"Given user2 = ${user2}\t->\tuser1 == user2 is ${user1 == user2}")
   val user3 = User(name = "BalmungSan", age = 21)
-  println(s"Given user3 = ${user3}\t->\tuser1 == user2 is ${user1 == user3}")
+  println(s"Given user3 = ${user3}\t->\tuser1 == user3 is ${user1 == user3}")
   def getUserAge(user: User): Int = user match {
     case User(name, age) => age
   }
