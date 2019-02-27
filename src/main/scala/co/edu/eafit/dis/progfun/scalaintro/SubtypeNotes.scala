@@ -229,12 +229,12 @@ object SubtypeNotes extends App {
   // Sometimes, we want to provide complex type restrictions to our functions.
   // Or we want to extract very specific type information about our arguments,
   // to provide a most concrete return type.
-  // In those cases, type bounds may not work well and we need a more powerful
-  // constructor - in those cases one can use the generalized type constraints.
+  // In those cases, type bounds may not work well and we would need a more powerful constructor,
+  // in those cases one can use the generalized type constraints.
   // There are two constraints:
   //   * Subtype constraint, T <:< U, proves that T is a subtype of U.
   //   * Sametype constraint, T =:= U, proves that T is the same type as U.
-  // They work as an implicit evidence that the compiler will try to fill.
+  // They work as an implicit evidence that the compiler will provide.
   // Note: For more information read the "Generalized type constraints in Scala" blog.
   println("- Generalized type constraint -")
   object TypeChecker {
