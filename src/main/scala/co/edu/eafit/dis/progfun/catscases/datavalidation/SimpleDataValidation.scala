@@ -1,67 +1,22 @@
-package co.edu.eafit.dis.progfun.catscases
+package co.edu.eafit.dis.progfun.catscases.datavalidation
 
 import cats.Semigroup
-import cats.syntax.semigroup._
-import cats.syntax.either._
-import cats.instances.list._
-import cats.data.Validated
+
+import cats.data.Validated.{Invalid, Valid}
+import cats.data.{NonEmptyList, Validated}
 import cats.data.Validated._
 import cats.syntax.apply._
+import cats.syntax.semigroup._
 import cats.syntax.validated._
-
+import cats.syntax.either._
+import cats.instances.list._
 
 /**
   * - [ ] Combine checks
   * - [ ] Accumulating errors as we check
   * - [ ] Transforming data as we check it
   **/
-object DataValidation extends App {
-
-  //Book's suggested implementation for Check
-  sealed trait CheckF[E, A] {
-    def and(that: CheckF[E, A]): CheckF[E, A] =
-      AndF(this, that)
-
-    def apply(a: A)(implicit s: Semigroup[E]): Either[E, A] =
-      this match {
-        case PureF(func) =>
-          func(a)
-
-        case AndF(left, right) =>
-          (left(a), right(a)) match {
-            case (Left(e1), Left(e2)) => (e1 |+| e2).asLeft
-            case (Left(e), Right(a)) => e.asLeft
-            case (Right(a), Left(e)) => e.asLeft
-            case (Right(a1), Right(a2)) => a.asRight
-          }
-      }
-  }
-
-  // With an explicit data type for each combinator.
-  final case class AndF[E, A](left: CheckF[E, A],
-                             right: CheckF[E, A]) extends CheckF[E, A]
-
-  final case class PureF[E, A](
-                               func: A => Either[E, A]) extends CheckF[E, A]
-
-  // Perform some validation
-  val emailValidationA: CheckF[List[String], String] = PureF{ v =>
-    if (v.split('@').length == 2) v.asRight
-    else List("Must contain 1 '@'").asLeft
-  }
-
-  val emailValidationB: CheckF[List[String], String] = PureF { v =>
-    if(v.contains(' ')) List("Must not contain blank spaces").asLeft
-    else v.asRight
-  }
-
-  val check: CheckF[List[String], String] =
-    emailValidationA and emailValidationB
-
-  println(check("email@email.com")) //Success
-  println(check("email.email.com"))
-  println(check(" email@email.com"))
-  println(check("email email.com")) //Both errors
+object SimpleDataValidation extends App {
 
   sealed trait Predicate[E, A] {
     import Predicate._ //Predicate's type classes defined below.
@@ -151,4 +106,45 @@ object Predicate {
         check1(a).withEither(_.flatMap(b => check2(b).toEither))
     }
   }
+
+  type Errors = NonEmptyList[String]
+
+  def error(s: String): NonEmptyList[String] =
+    NonEmptyList(s, Nil)
+
+  // Use lift as a constructor.
+  def longerThan(n: Int): Predicate[Errors, String] =
+    Predicate.lift(
+      error(s"Must be longer than $n characters"),
+      str => str.size > n)
+
+  val alphanumeric: Predicate[Errors, String] =
+    Predicate.lift(
+      error(s"Must be all alphanumeric characters"),
+      str => str.forall(_.isLetterOrDigit))
+
+  def contains(char: Char): Predicate[Errors, String] =
+    Predicate.lift(
+      error(s"Must contain the character $char"),
+      str => str.contains(char))
+
+  def containsOnce(char: Char): Predicate[Errors, String] =
+    Predicate.lift(
+      error(s"Must contain the character $char only once"),
+      str => str.filter(c => c == char).size == 1)
+
+
+  // A username must contain at least four characters
+  // and consist entirely of alphanumeric characters
+  val checkUsername: Check[Errors, String, String] =
+  Check(longerThan(3) and alphanumeric)
+
+  final case class User(username: String)
+
+  def createUser(username: String, email: String): Validated[Errors, User] =
+    // How do we check emails ??
+    checkUsername(username).map(User)
+
+  createUser("Noel", "noel@underscore.io")
+  createUser("", "dave@underscore@io")
 }

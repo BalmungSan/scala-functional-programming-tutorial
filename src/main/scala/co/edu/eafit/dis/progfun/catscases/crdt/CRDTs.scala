@@ -1,32 +1,20 @@
-package co.edu.eafit.dis.progfun.catscases
+package co.edu.eafit.dis.progfun.catscases.crdt
 
 import cats.Monoid
-import cats.syntax.semigroup._ // for |+|
-import cats.instances.map._ // for Monoid
+
+import cats.instances.int._
 import cats.instances.list._ // for Monoid
-import scala.language.higherKinds // For F[_]
+import cats.instances.map._ // for Monoid
 import cats.syntax.foldable._ // for combineAll
+import cats.syntax.semigroup._ // for |+|
+import scala.language.higherKinds // For F[_]
 
-
-// Commutative Replicated Data Types
+/**
+  * Commutative Replicated Data Types, a family of data
+  * structures that can be used to reconcile eventually
+  * consistent data.
+  */
 object CRDTs extends App {
-
-  final case class _GCounter(counters: Map[String, Int]) {
-    def increment(machine: String, amount: Int): _GCounter = {
-      val value = amount + counters.getOrElse(machine, 0)
-      new _GCounter(counters + (machine -> value))
-    }
-
-    def merge(that: _GCounter): _GCounter =
-      new _GCounter(that.counters ++ this.counters.map {
-        case(k, v) =>
-          k -> (v max that.counters.getOrElse(k, 0))
-      })
-
-    def total: Int =
-      counters.values.foldLeft(0)(_ + _)
-  }
-
   //BoundedSemiLattice aka. Idempotent Commutative Monoid
   trait BoundedSemiLattice[A] extends Monoid[A] {
     def combine(a1: A, a2: A): A
@@ -50,26 +38,7 @@ object CRDTs extends App {
       }
   }
 
-  final case class GCounterA[A](counters: Map[String, A]) {
-
-    def increment(machine: String, amount: A)
-         (implicit boundedSemiLattice: BoundedSemiLattice[A]): GCounterA[A] = {
-      val value =
-        amount |+| counters.getOrElse(machine, boundedSemiLattice.empty)
-
-      new GCounterA(counters + (machine -> value))
-    }
-
-    def merge(that: GCounterA[A])
-            (implicit boundedSemiLattice: BoundedSemiLattice[A]): GCounterA[A] =
-      new GCounterA(this.counters |+| that.counters)
-
-    def total(implicit boundedSemiLattice: BoundedSemiLattice[A]): A =
-      counters.values.foldLeft(boundedSemiLattice.empty)(_ |+| _)
-  }
-
-
-  // Type class of a GCounter
+  // Type class for GCounter
   trait GCounter[F[_, _], K, V] {
     def increment(f: F[K, V]) (k: K, v: V)
                  (implicit m: Monoid[V]): F[K, V]
@@ -87,13 +56,11 @@ object CRDTs extends App {
       counter
   }
 
-
-  // Type class instance
+  // GCounter instance
   implicit def mapInstance[K, V]: GCounter[Map, K, V] =
     new GCounter[Map, K, V] {
       override def increment(map: Map[K, V])(id: K, amount: V)
                             (implicit m: Monoid[V]): Map[K, V] = {
-
         val value = amount |+| map.getOrElse(id, m.empty)
         map + (id -> value)
       }
@@ -106,20 +73,7 @@ object CRDTs extends App {
         map.values.toList.combineAll
     }
 
-  // Test
-  import cats.instances.int._ // for Monoid
-  val g1 = Map("a" -> 7, "b" -> 3)
-  val g2 = Map("a" -> 2, "b" -> 5)
-  val counter = GCounter[Map, String, Int]
-  val merged = counter.merge(g1, g2)
-  println(merged.toString())
-  // merged: Map[String,Int] = Map(a -> 7, b -> 5)
-  val total = counter.total(merged)
-  // total: Int = 12
-  println(total)
-
-
-  // Type class for Key - Value
+  // Type class for Key - Value store
   trait KeyValueStore[F[_,_]] {
     def put[K, V](f: F[K, V])(k: K, v: V): F[K, V]
 
@@ -146,43 +100,45 @@ object CRDTs extends App {
         f.values.toList
     }
 
+  // Syntax for any data type of KeyValueStore
   implicit class KvsOps[F[_,_], K, V](f: F[K, V]) {
-    def put(key: K, value: V)
-           (implicit kvs: KeyValueStore[F]): F[K, V] =
+    def put(key: K, value: V) (implicit kvs: KeyValueStore[F]): F[K, V] =
       kvs.put(f)(key, value)
+
     def get(key: K)(implicit kvs: KeyValueStore[F]): Option[V] =
       kvs.get(f)(key)
-    def getOrElse(key: K, default: V)
-                 (implicit kvs: KeyValueStore[F]): V =
+
+    def getOrElse(key: K, default: V) (implicit kvs: KeyValueStore[F]): V =
       kvs.getOrElse(f)(key, default)
+
     def values(implicit kvs: KeyValueStore[F]): List[V] =
       kvs.values(f)
   }
 
   implicit def gcounterInstance[F[_,_], K, V]
-  (implicit kvs: KeyValueStore[F], km: Monoid[F[K, V]]) =
+  (implicit kvs: KeyValueStore[F], km: Monoid[F[K, V]]): GCounter[F, K, V] =
     new GCounter[F, K, V] {
-      def increment(f: F[K, V])(key: K, value: V)
-                   (implicit m: Monoid[V]): F[K, V] = {
+      def increment(f: F[K, V])(key: K, value: V)(implicit m: Monoid[V]): F[K, V] = {
         val total = f.getOrElse(key, m.empty) |+| value
         f.put(key, total)
       }
-      def merge(f1: F[K, V], f2: F[K, V])
-               (implicit b: BoundedSemiLattice[V]): F[K, V] =
+
+      def merge(f1: F[K, V], f2: F[K, V])(implicit b: BoundedSemiLattice[V]): F[K, V] =
         f1 |+| f2
+
       def total(f: F[K, V])(implicit m: Monoid[V]): V =
         f.values.combineAll
     }
 
   // Test
-  import cats.instances.int._ // for Monoid
+
   val map1 = Map("a" -> 7, "b" -> 3)
   val map2 = Map("a" -> 2, "b" -> 5)
+
   val gcounter = gcounterInstance[Map, String, Int]
-  val merge = counter.merge(map1, map2)
-  println(merged.toString())
-  // merged: Map[String,Int] = Map(a -> 7, b -> 5)
-  val totalize = counter.total(merged)
-  // total: Int = 12
+  val merge = gcounter.merge(map1, map2)
+  println(merge.toString())
+
+  val totalize = gcounter.total(merge)
   println(totalize)
 }
