@@ -63,15 +63,9 @@ object SubtypeNotes extends App {
       case Nil         => Nil
       case Cons(x, xs) => Cons(f(x), xs.map(f))
     }
-    override final def toString: String = {
-      def loop(acc: String, remaining: List[T]): String = remaining match {
-        case Nil         => acc
-        case Cons(x, xs) => loop(s"${acc}, ${x}", remaining = xs)
-      }
-      this match {
-        case Nil         => "List()"
-        case Cons(x, xs) => s"List(${loop(x.toString, remaining = xs)})"
-      }
+    override final def toString: String = this match {
+      case Nil         => "Nil"
+      case Cons(x, xs) => s"${x} :: ${xs}"
     }
   }
   final case class Cons[+T](head: T, tail: List[T]) extends List[T]
@@ -134,7 +128,7 @@ object SubtypeNotes extends App {
       |  private[this] var value: T = initialValue
       |  def getValue: T = value
       |  def setValue(newValue: T): Unit = this.value = newValue
-      |  def toString: String = s"Box { value = ${value} }"
+      |  def toString: String = 'Box { value = $value }'
       |}""".stripMargin
   )
   val intBox = new MutableBox(initialValue = 10)

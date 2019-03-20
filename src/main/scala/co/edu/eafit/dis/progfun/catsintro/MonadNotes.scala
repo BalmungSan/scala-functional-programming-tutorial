@@ -148,7 +148,7 @@ object MonadNotes extends App {
   type Logged[A] = Writer[List[String], A]
   def loggedFacotrial(n: Int): Logged[Int] = for {
     ans <- if (n == 1) Writer.value[List[String], Int](1) else loggedFacotrial(n - 1)
-    log <- Writer.tell(List(s"fact ${n}, ${ans}"))
+    _   <- Writer.tell(List(s"fact ${n}, ${ans}"))
   } yield ans
   val (log, value) = loggedFacotrial(5).run
   println(s"Given loggedFacotrial = n => for (ans <- if (n == 1) Writer.value(1) else loggedFacotrial(n - 1); _ <- Writer.tell(List(s'fact $${n}, $${ans}'))) yield ans\t->\tloggedFacotrial(5), log = ${log}, value = ${value}")
@@ -188,6 +188,7 @@ object MonadNotes extends App {
   }
   def operator[R: Fractional](fun: (R, R) => R): CalcState[R] = State {
     case a :: b :: tail => val ans = fun(a, b); (ans :: tail, ans)
+    case _ => throw new Error("Syntax error.")
   }
   def operand[R: Fractional](num: R): CalcState[R] = State {
     stack => (num :: stack, num)

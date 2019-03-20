@@ -494,7 +494,7 @@ object ScalaNotes extends App {
     case 0                      => "Int Zero" // Simple value match.
     case Constant               => "Int 10" // Constant match.
     case `y`                    => "Y" // Variable match.
-    case boolean: Boolean       => "Boolean" // Type match.
+    case _: Boolean             => "Boolean" // Type match.
     case int: Int if (int > 10) => "Int greater than ten" // Guard match.
     case x :: xs                => s"List with head: ${x} & tail: ${xs}" // Structure match - List.
     case (x, y, z)              => s"Tuple3: (${x}, ${y}, ${z})" // Structure match - Tuples.
@@ -507,8 +507,8 @@ object ScalaNotes extends App {
       |  case `y`                    => 'Y' // Variable match.
       |  case boolean: Boolean       => 'Boolean' // Type match.
       |  case int: Int if (int > 10) => 'Int greater than ten' // Guard match.
-      |  case x :: xs                => s'List with head: ${x} & tail: ${xs}' // Structure match.
-      |  case (x, y, z)              => s'Tuple3: (${x}, ${y}, ${z})' // Structure match - Tuples.
+      |  case x :: xs                => 'List with head: $x & tail: $xs' // Structure match - List.
+      |  case (x, y, z)              => 'Tuple3: ($x, $y, $z)' // Structure match - Tuples.
       |  case _                      => 'Other thing' // Default match.
       |}""".stripMargin
   )
@@ -562,7 +562,7 @@ object ScalaNotes extends App {
   val user3 = User(name = "BalmungSan", age = 21)
   println(s"Given user3 = ${user3}\t->\tuser1 == user3 is ${user1 == user3}")
   def getUserAge(user: User): Int = user match {
-    case User(name, age) => age
+    case User(_, age) => age
   }
   println(s"Given getUserAge(user: User): Int = user match { case User(_, age) => age }\t->\tgetUserAge(user1) = ${getUserAge(user1)}")
   // Case objects and ADTs

@@ -17,8 +17,9 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
     3. `MonadNotes.scala` Monad notes - Id, Error, Eval, Writer, Reader & State Monads notes - Monad Transformers notes.
     4. `ApplicativeNotes.scala` Applicative & Validated notes.
     5. `TraverseNotes.scala` Foldable & Traverse notes.
-3. `catscases` This packages contains the solutions to case studies of **Scala with Cats** book. _(pending)_
-4. `iointro` This package contains notes for introduction to the **Cats-Effect** library for Effects. _(pending)_
+3. `catscases` This packages contains the solutions to case studies of **Scala with Cats** book.
+4. `iointro` This package contains notes for introduction to the **Cats-Effect** library for encoding side-effects as pure values.
+    1. `IONotes.scala` Introduction to the IO Monad.
 
 ## Bibliography
 

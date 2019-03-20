@@ -26,14 +26,16 @@ object TypeclassesNotes extends App {
     def asString: String
   }
   final case class User1(name: String, age: Int) extends Printable {
-    override def asString: String = s"User { name: '${name}', age: '${age}' }"
+    override def asString: String =
+      s"User { name: '${name}', age: '${age}' }"
   }
   println(
     """trait Printable {
       |  def asString: String
       |}
       |final case class User(name: String, age: Int) extends Printable {
-      |  override def asString: String = s"User { name: '${name}', age: '${age}' }"
+      |  override def asString: String =
+      |    'User { name: $name, age: $age }'
       |}""".stripMargin
   )
   val user1 = User1(name = "Luis Miguel Mejía Suárez", age = 21)
@@ -76,9 +78,9 @@ object TypeclassesNotes extends App {
       |  def print(t: T): String
       |}
       |final case class User(name: String, age: Int)
-      |implicit val UserPrinter: Printer[User2] = new Printer[User2] {
-      |  override def print(user: User2): String =
-      |    s"User { name: '${user.name}', age: '${user.age}' }"
+      |implicit val UserPrinter: Printer[User] = new Printer[User] {
+      |  override def print(user: User): String =
+      |    'User { name: $user.name, age: $user.age }'
       |}""".stripMargin
   )
   val user2 = User2(name = "BalmungSan", age = 35)
@@ -95,7 +97,8 @@ object TypeclassesNotes extends App {
       implicit class PrinterOps[T](val t: T) extends AnyVal {
         // Provides the asString method to any instance of any type T,
         // as long as there is a Printer for such type T.
-        def asString(implicit TPrinter: Printer[T]): String = TPrinter.print(t)
+        def asString(implicit TPrinter: Printer[T]): String =
+          TPrinter.print(t)
       }
     }
   }
@@ -103,7 +106,8 @@ object TypeclassesNotes extends App {
     """object syntax {
       |  object printer {
       |    implicit class PrinterOps[T](val t: T) extends AnyVal {
-      |      def asString(implicit TPrinter: Printer[T]): String = TPrinter.print(t)
+      |      def asString(implicit TPrinter: Printer[T]): String =
+      |        TPrinter.print(t)
       |    }
       |  }
       |}""".stripMargin
@@ -141,7 +145,7 @@ object TypeclassesNotes extends App {
       |  implicit def listPrinter[T](implicit TPrinter: Printer[T]): Printer[List[T]] =
       |    new Printer[List[T]] {
       |      override def print(l: List[T]): String =
-      |        l.map(t => TPrinter.print(t)).mkString("[", ", ", "]")
+      |        l.map(t => TPrinter.print(t)).mkString('[', ', ', ']')
       |    }
       |}""".stripMargin
   )
