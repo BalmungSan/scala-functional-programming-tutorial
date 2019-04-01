@@ -5,8 +5,8 @@ import cats.instances.function._ // Brings the implicit Functor[X => _] instance
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
 import cats.instances.list._ // Brings the implicit Functor[List[_]] instance to scope.
 import cats.instances.string._ // Brings the implicit Eq[String] instance to scope.
-import cats.syntax.eq.catsSyntaxEq // Provides the === operator for type safe equality checks.
-import cats.syntax.functor.toFunctorOps // Provides the map operator for mapping a Functor.
+import cats.syntax.eq._ // Provides the === operator for type safe equality checks.
+import cats.syntax.functor._ // Provides the map operator for mapping a Functor.
 import scala.language.higherKinds // Enable the use of higher-kinded types, like F[_].
 
 object FunctorNotes extends App {

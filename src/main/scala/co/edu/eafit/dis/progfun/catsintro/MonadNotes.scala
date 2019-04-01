@@ -11,9 +11,9 @@ import cats.data.Writer // Import the Writer Monad data type.
 import cats.instances.either._ // Brings the implicit MonadError[Either[E, _], E] instance to scope.
 import cats.instances.int._ // Brings the implicit Eq[Int] instance to scope.
 import cats.instances.list._ // Brings the implicit Monad[List[_]] instance to scope.
-import cats.syntax.eq.catsSyntaxEq // Provides the === operator for type safe equality checks.
-import cats.syntax.functor.toFunctorOps // Provides the map operator for mapping a Monad.
-import cats.syntax.flatMap.toFlatMapOps // Provides the flatMap operator for mapping a Monad.
+import cats.syntax.eq._ // Provides the === operator for type safe equality checks.
+import cats.syntax.functor._ // Provides the map operator for mapping a Monad.
+import cats.syntax.flatMap._ // Provides the flatMap operator for mapping a Monad.
 import scala.language.higherKinds // Enable the use of higher-kinded types, like F[_].
 
 object MonadNotes extends App {

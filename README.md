@@ -18,6 +18,10 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
     4. `ApplicativeNotes.scala` Applicative & Validated notes.
     5. `TraverseNotes.scala` Foldable & Traverse notes.
 3. `catscases` This packages contains the solutions to case studies of **Scala with Cats** book.
+    1. `AsyncTesting.scala` Solution to the "Testing Asynchronous Code" case study.
+    2. `MapReduce.scala` Solution to the "Map-Reduce" case study.
+    3. `DataValidation.scala` Solution to the "Data Validation" case study.
+    4. `CRDT.scala` Solution to the "CRDTs" case study.
 4. `iointro` This package contains notes for introduction to the **Cats-Effect** library for encoding side-effects as pure values.
     1. `IONotes.scala` Introduction to the IO Monad.
 

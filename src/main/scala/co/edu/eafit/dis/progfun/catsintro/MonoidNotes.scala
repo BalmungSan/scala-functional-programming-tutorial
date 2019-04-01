@@ -2,8 +2,8 @@ package co.edu.eafit.dis.progfun.catsintro
 
 import cats.Monoid // Import the Monoid type class.
 import cats.instances.int._ // Brings the implicit Monoid[Int] and Eq[Int] instances to scope.
-import cats.syntax.eq.catsSyntaxEq // Provides the === operator for type safe equality checks.
-import cats.syntax.semigroup.catsSyntaxSemigroup // Provides the |+| operator for combining two Monoids.
+import cats.syntax.eq._ // Provides the === operator for type safe equality checks.
+import cats.syntax.semigroup._ // Provides the |+| operator for combining two Monoids.
 
 object MonoidNotes extends App {
   // The Semigroup typeclass encodes the ability to
