@@ -1,9 +1,9 @@
 // Project settings.
-name := "Scala Functional Programming"
-organization := "co.edu.eafit.dis.progfun"
-version := "0.1.0"
-scalaVersion := "2.12.8"
-scalacOptions ++= Seq(
+ThisBuild / name := "Scala Functional Programming"
+ThisBuild / organization := "co.edu.eafit.dis.progfun"
+ThisBuild / version := "0.1.0"
+ThisBuild / scalaVersion := "2.12.8"
+ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
   "-encoding", "utf-8",
   "-explaintypes",
@@ -37,39 +37,48 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard"
 )
 
-// Disable the linter and warning flags on the console.
-scalacOptions in (Compile, console) ~= {
-  _.filterNot(flag => flag.startsWith("-Xlint") || flag.startsWith("-Ywarn"))
-}
-
 // Dependencies.
 val CatsVersion = "1.6.0"
 val CatsEffectVersion = "1.2.0"
-libraryDependencies ++= Seq(
+ThisBuild / libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core"   % CatsVersion,
   "org.typelevel" %% "cats-effect" % CatsEffectVersion
 )
 
-// Kind projector.
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
+lazy val commonSettings = Seq(
+  // Disable the linter and warning flags on the console.
+  Compile / console / scalacOptions ~= {
+    _.filterNot(flag => flag.startsWith("-Xlint") || flag.startsWith("-Ywarn"))
+  },
 
-// Ammonite.
-libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.4" % "test" cross CrossVersion.full
+   // Kind projector.
+  addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"),
 
-sourceGenerators in Test += Def.task {
-  val file = (sourceManaged in Test).value / "amm.scala"
-  IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
-  Seq(file)
-}.taskValue
+  // Ammonite.
+  libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.5" % Test cross CrossVersion.full,
 
-(fullClasspath in Test) ++= {
-  (updateClassifiers in Test).value
-    .configurations
-    .find(_.configuration == Test.name)
-    .get
-    .modules
-    .flatMap(_.artifacts)
-    .collect{case (a, f) if a.classifier == Some("sources") => f}
-}
+  Test / sourceGenerators += Def.task {
+    val file = (Test / sourceManaged).value / "amm.scala"
+    IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
+    Seq(file)
+  }.taskValue,
 
+  Test / fullClasspath ++= {
+    (updateClassifiers in Test).value
+      .configurations
+      .find(_.configuration == Test.name)
+      .get
+      .modules
+      .flatMap(_.artifacts)
+      .collect { case (a, f) if a.classifier == Some("sources") => f }
+  }
+)
+
+// Alias for executing ammonite.
 addCommandAlias("amm", "test:runMain amm")
+
+// Modules.
+lazy val scalaintro = project.settings(commonSettings)
+lazy val catsintro  = project.settings(commonSettings)
+lazy val catscases  = project.settings(commonSettings)
+lazy val iointro    = project.settings(commonSettings)
