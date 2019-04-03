@@ -151,15 +151,15 @@ object ScalaNotes extends App {
   // Note: All this methods return a new collection with the applied transformation,
   // instead of mutating the original collection.
   //
-  // reverse (list only) - reverse the elements of a list.
   println("--- Common collection's methods ---")
+  // reverse (list only) - reverse the elements of a list.
   val reversed = List(1, 2, 3).reverse
   println(s"List(1, 2, 3).reverse = ${reversed}")
   // sort (list only) - sorts the elements of a list.
   val sortedAuto = List(2, 3, 1).sorted // The default sorting is ascending.
   println(s"List(2, 3, 1).sorted = ${sortedAuto}")
   val sortedManual = List(2, 3, 1).sortWith(_ > _) // Custom descending sort.
-  println(s"List(2, 3, 1).sortBy(_ > _) = ${sortedManual}")
+  println(s"List(2, 3, 1).sortWith(_ > _) = ${sortedManual}")
   // zip (list only) joins two lists together into a list of pairs.
   val zipped = List(1, 2, 3) zip List('a', 'b', 'c')
   println(s"List(1, 2, 3) zip List('a', 'b', 'c') = ${zipped}")
