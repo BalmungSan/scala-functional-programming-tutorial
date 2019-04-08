@@ -277,7 +277,9 @@ object ScalaNotes extends App {
   // Returning an Either.
   type Dollars = Double
   type DuffCans = Int
-  def buyAlcohol(age: Int, money: Dollars): Either[String, (Int, DuffCans)] =
+  type Age = Int
+  type Error = String
+  def buyAlcohol(age: Age, money: Dollars): Either[Error, (Age, DuffCans)] =
     if (age < 21)
       Left("Not allowed to drink")
     else if (money <= 5.0d)
@@ -302,7 +304,7 @@ object ScalaNotes extends App {
   val cans3 = buyAlcohol(age   = 30, money = 60)
   println(s"\tbuyAlcohol(age = 30, money = 60) = ${cans3}")
   // Applying a safe transformation inside an Either.
-  def isDrunk(age: Int, cans: DuffCans): (Boolean, Int, DuffCans) =
+  def isDrunk(age: Age, cans: DuffCans): (Boolean, Age, DuffCans) =
     (cans > 10, age, cans)
   println(
     """Given
@@ -317,7 +319,7 @@ object ScalaNotes extends App {
   val isDrunk3 = cans3.map((isDrunk _).tupled)
   println(s"\tbuyAlcohol(age = 30, money = 60).map(isDrunk) = ${isDrunk3}")
   // Chaining unsafe transformations with Either.
-  def buyMore(isDrunk: Boolean, age: Int, previousCans: DuffCans): Either[String, (Int, DuffCans)] = {
+  def buyMore(isDrunk: Boolean, age: Age, previousCans: DuffCans): Either[Error, (Int, DuffCans)] = {
     val bought =
       if (isDrunk)
         buyAlcohol(age, money = 0)
@@ -344,7 +346,7 @@ object ScalaNotes extends App {
   println(s"\tbuyAlcohol(age = 30, money = 60).map(isDrunk).flatMap(buyMore) = ${buyMore3}")
   //
   // Try is like an Either whose Left is always a Throwable.
-  // A Try[A] could be a Success(v: A) or a Failure(e: Throwable).
+  // A Try[T] could be a Success(v: T) or a Failure(e: Throwable).
   // Its constructor will catch any non-fatal exception and will wrap it in a Failure.
   // For that reason, it is commonly used to interact with code that throws exceptions.
   println("--- Try ---")
@@ -428,7 +430,7 @@ object ScalaNotes extends App {
   //       but that behave the same no matter the concrete instance
   //       or that should not require any instance.
   //       (Like a static method in Java).
-  //       In order to made son, the object must have the same name of the class
+  //       In order to made so, the object must have the same name of the class
   //       and be defined in the same compilation unit (same file).
   //
   // Traits.
@@ -489,10 +491,10 @@ object ScalaNotes extends App {
   //       you can do on a pattern matching,
   //       but you should never write a function that accepts an Any.
   println("-- Pattern matching --")
-  final val Constant: Int = 10 // The final is needed.
+  final val CONSTANT: Int = 10 // The final is needed.
   def patternMatch(x: Any, y: Any = 0): String = x match {
     case 0                      => "Int Zero" // Simple value match.
-    case Constant               => "Int 10" // Constant match.
+    case CONSTANT               => "Int 10" // Constant match.
     case `y`                    => "Y" // Variable match.
     case _: Boolean             => "Boolean" // Type match.
     case int: Int if (int > 10) => "Int greater than ten" // Guard match.
@@ -503,7 +505,7 @@ object ScalaNotes extends App {
   println(
     """def patternMatch(x: Any, y: Any = 0): String = x match {
       |  case 0                      => 'Int Zero' // Simple value match.
-      |  case Constant               => 'Int 10' // Constant match.
+      |  case CONSTANT               => 'Int 10' // Constant match.
       |  case `y`                    => 'Y' // Variable match.
       |  case boolean: Boolean       => 'Boolean' // Type match.
       |  case int: Int if (int > 10) => 'Int greater than ten' // Guard match.
