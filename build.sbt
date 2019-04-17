@@ -54,6 +54,9 @@ lazy val commonSettings = Seq(
    // Kind projector.
   addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"),
 
+  // Better monadic for.
+  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0"),
+
   // Ammonite.
   libraryDependencies += "com.lihaoyi" % "ammonite" % "1.6.5" % Test cross CrossVersion.full,
 
