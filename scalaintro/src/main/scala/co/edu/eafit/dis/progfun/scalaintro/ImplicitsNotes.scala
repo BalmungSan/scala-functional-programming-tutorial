@@ -139,7 +139,8 @@ object ImplicitsNotes extends App {
   //       together with an implicit conversion from its argument to the class.
   println("-- Implicit classes & Extention methods --")
   implicit class StringOps(val s: String) extends AnyVal {
-    def toIntOption: Option[Int] = util.Try(s.toInt).toOption
+    def toIntOption: Option[Int] =
+      scala.util.Try(s.toInt).toOption
   }
   println(
     """implicit class StringOps(val s: String) extends AnyVal {

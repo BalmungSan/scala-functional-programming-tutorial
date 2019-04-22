@@ -14,7 +14,7 @@ object SubtypeNotes extends App {
   //   * It is a subtype, and also a sub-class, of Any.
   //   * It is a supertype, but not a super-class, of Nothing.
   // Also for any reference type, namely a type that is not a "primitive"
-  // and is defined by a class, trait or object,  we can say that:
+  // and is defined by a class, trait or object, we can say that:
   //   * It is a subtype, and also a sub-class, of AnyRef.
   //     This is the equivalent of java.lang.Object. AnyRef <: Any.
   //   * It is a supertype, but not a super-class, of Null.
@@ -55,7 +55,7 @@ object SubtypeNotes extends App {
   // We will define our own List to show how covariance works.
   // Since Lists are covariant, then if a method expects a List[U], a List[T] can always be used instead.
   // This makes sense because we can only use, but not modify, what is inside the List.
-  // And since any T can be used where a U is expected, then List[A] <: List[B] is concluded.
+  // And since any T can be used where a U is expected, then List[T] <: List[U] is concluded.
   sealed trait List[+T] extends Product with Serializable {
     def ::[U >: T](elem: U): List[U] =
       Cons(head = elem, tail = this)
@@ -138,7 +138,7 @@ object SubtypeNotes extends App {
   // At first sight, it looks like this MutableBox could be covariant...
   // But, any mutable data structure has to be invariant!
   // Mutability could lead to runtime type errors,
-  //  to show how consider the following code (Assuming covariance):
+  // to show how consider the following code (Assuming covariance):
   // val dogBox: MutableBox[Dog] = new MutableBox(initialValue = Dog(name = "Lucas"))
   // val petBox: MutableBox[Pet] = dogBox
   // petBox.setValue(newValue = Cat(name = "Luzy"))
@@ -203,7 +203,7 @@ object SubtypeNotes extends App {
   //   * Or it must be any subtype of T.
   //       In this case the element gets upcasted to T, and the List remains a List[T].
   //   * Or if it is another type U, which must be a supertype of T
-  //       In this case the List gets upcasted to a List[B].
+  //       In this case the List gets upcasted to a List[U].
   //
   //     Note: Because Any is just a supertype of everything,
   //           in the worst case the List will be upcasted to List[Any].
