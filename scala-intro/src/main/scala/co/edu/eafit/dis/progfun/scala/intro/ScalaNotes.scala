@@ -1,5 +1,6 @@
 package co.edu.eafit.dis.progfun.scala.intro
 
+import scala.collection.immutable.ArraySeq
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -126,14 +127,20 @@ object ScalaNotes extends App {
   // In Scala there are four main categories of collections:
   //   Immutable / Mutable    &    Serial / Parallel.
   println("-- Collections --")
-  // We will look only to the three most common of the immutable-serial group:
-  // Lists, Sets & Maps.
+  // We will look only to the four most common of the immutable-serial group:
+  // Lists, ArraySeqs, Sets & Maps.
   println("--- List - Set - Map ---")
   // List - Ordered collection of elements of the same type.
-  //        You can efficiently traverse it in a head-tail fashion.
+  //        You can efficiently traverse it, in a head-tail fashion.
   val list = List(1, 2, 3)
   println(s"List(1, 2, 3) = ${list}")
   println(s"Given list = List(1, 2, 3)\t->\tlist.head = ${list.head} & list.tail = ${list.tail}")
+  // ArraySeq - Ordered collection of elements of the same type.
+  //            You can efficiently access its elements by index,
+  //            and ask for it length.
+  val array = ArraySeq(1, 2, 3)
+  println(s"ArraySeq(1, 2, 3) = ${array}")
+  println(s"Given array = ArraySeq(1, 2, 3)\t->\tarray(1) = ${array(1)} & array.length = ${array.length}")
   // Set - Unordered collection of unique elements of the same type.
   //       You can use them to efficiently check if a value is contained.
   val set = Set(1, 2, 2, 3, 3, 3, 4, 5)
@@ -204,6 +211,19 @@ object ScalaNotes extends App {
   // mkString - formats a collection as a String.
   val formatted = List(1, 2, 3).mkString(start = "[", sep = ", ", end = "]")
   println(s"List(1, 2, 3).mkString('[', ', ', ']') = ${formatted}")
+  // groupMapReduce - serial implementation of the map-reduce algorithm.
+  val groupMapReduced = List(
+    "Hello",
+    "World",
+    "Good",
+    "Day",
+    "World",
+    "Good",
+    "Bye",
+    "Big",
+    "Data"
+  ).groupMapReduce(word => word.head.toLower)(_ => 1L)(_ + _)
+  println(s"List('Hello', 'World', 'Good', 'Day', 'World', 'Good', 'Bye', 'Big', 'Data').groupMapReduce(word => word.head.toLower)(_ => 1L)(_ + _) = ${groupMapReduced}")
   //
   // For comprehension!
   // It is nice syntax for map, flatMap and filter.
