@@ -3,9 +3,12 @@ ThisBuild / name := "Scala Functional Programming"
 ThisBuild / organization := "co.edu.eafit.dis.progfun"
 ThisBuild / scalaVersion := "2.13.0"
 
+// Allow to kill run with Ctrl + C.
+Global / cancelable := true
+
 // Dependencies.
-val CatsVersion = "2.0.0-RC2"
-val CatsEffectVersion = "2.0.0-RC2"
+val CatsVersion = "2.0.0"
+val CatsEffectVersion = "2.0.0"
 
 lazy val commonSettings = Seq(
   // Kind projector.
@@ -77,5 +80,7 @@ lazy val ioTutorial = (project in file("io-tutorial"))
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % CatsVersion,
       "org.typelevel" %% "cats-effect" % CatsEffectVersion
-    )
+    ),
+    // Fork run.
+    Compile / run / fork := true
   )
