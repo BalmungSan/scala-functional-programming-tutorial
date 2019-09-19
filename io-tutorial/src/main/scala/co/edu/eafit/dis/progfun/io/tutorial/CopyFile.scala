@@ -1,8 +1,8 @@
 package co.edu.eafit.dis.progfun.io.tutorial
 
 import cats.effect.{ContextShift, ExitCase, ExitCode, IO, IOApp, Resource, Timer}
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.syntax.flatMap._ // Provides the >> operator.
+import cats.syntax.functor._ // Provides the as method.
 
 import java.io.{InputStream, OutputStream}
 import java.nio.file.{Files, Path, Paths}
@@ -12,29 +12,31 @@ object CopyFile extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
     args match {
       case List(originPath, destinationPath) =>
-        Program.program(originPath, destinationPath).as(ExitCode.Success)
+        CopyFileProgram
+          .program(originPath, destinationPath)
+          .as(ExitCode.Success)
 
       case _ =>
         IO {
           println(
-            """IOCopyFile: Bad number of arguments.
+            """IOCopyFile: Error: Bad number of arguments.
               |Usages: IOCopyFile origin destination""".stripMargin
           )
         }.as(ExitCode.Error)
     }
 }
 
-object Program {
+object CopyFileProgram {
   def program(originPath: String, destinationPath: String)
              (implicit ev1: ContextShift[IO], ev2: Timer[IO]): IO[Unit] =
     copy(
       origin = Paths.get(originPath),
       destination = Paths.get(destinationPath)
     ).flatMap { copiedBytes =>
-      IO(println(s"Copy succesful. Copied ${copiedBytes} bytes."))
+      IO(println(s"IOCopyFile: Copy succesful. Copied ${copiedBytes} bytes."))
     }.guaranteeCase {
       case ExitCase.Canceled =>
-        IO(println("Canceled!"))
+        IO(println("IOCopyFile: Canceled!"))
 
       case _ =>
         IO.unit
@@ -77,7 +79,6 @@ object Program {
         _ <- IO.cancelBoundary // Checks for cancellation.
         amount <- IO(origin.read(buffer, 0, buffer.size))
         count  <- if(amount > -1) {
-          IO.cancelBoundary >> // Checks for cancellation.
           IO(destination.write(buffer, 0, amount)) >>
           transmit(buffer, acc + amount)
         } else {
