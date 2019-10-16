@@ -1,9 +1,12 @@
 package co.edu.eafit.dis.progfun.io.tutorial
 
 import cats.effect.{Concurrent, ExitCase, ExitCode, IO, IOApp, Resource, Sync}
+import cats.effect.concurrent.MVar
 import cats.effect.syntax.bracket._ // Provides the bracketCase & guarantee methods.
 import cats.effect.syntax.concurrent._ // Provides the start method.
 import cats.syntax.flatMap._ // Provides the >> operator.
+import cats.syntax.functor._ // Provides the map method.
+import cats.syntax.applicativeError._ // Provides the attempt method.
 
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 import java.net.{ServerSocket, Socket}
@@ -41,31 +44,53 @@ object TCPServerProgram {
         )
     }
 
-  private def serve[F[_]: Concurrent](serverSocket: ServerSocket): F[Unit] = {
+  private def serve[F[_]: Concurrent](serverSocket: ServerSocket): F[Unit] =
+    for {
+      stopFlag <- MVar[F].empty[Unit]
+      serverFiber <- server(serverSocket, stopFlag).start
+      _ <- stopFlag.read
+      _ <- serverFiber.cancel.start
+    } yield ()
+
+  private def server[F[_]: Concurrent](serverSocket: ServerSocket, stopFlag: MVar[F, Unit]): F[Unit] = {
     Sync[F]
       .delay(serverSocket.accept())
       .bracketCase { socket =>
-        echoProtocol(socket)
-          .guarantee(Sync[F].delay(socket.close())) // Ensure the socket is closed after use.
+        echoProtocol(socket, stopFlag)
+          .guarantee(Sync[F].delay(socket.close())) // Ensure the socket is closed after use or cancellation.
           .start
       } {
         // Handle adquisition errors.
         case (_, ExitCase.Completed) => Sync[F].unit
         case (socket, _)             => Sync[F].delay(socket.close())
+      }.flatMap { fiber =>
+        (stopFlag.read >> fiber.cancel).start
       } >> serve(serverSocket) // Loop endlessly.
   }
 
-  private def echoProtocol[F[_] : Sync](clientSocket: Socket): F[Unit] = {
+  private def echoProtocol[F[_] : Sync](clientSocket: Socket, stopFlag: MVar[F, Unit]): F[Unit] = {
     def loop(reader: BufferedReader, writer: PrintWriter): F[Unit] =
       Sync[F]
         .delay(reader.readLine())
+        .attempt
         .flatMap {
-          case "" =>
+          case Right("") =>
             Sync[F].unit
 
-          case line =>
+          case Right("STOP!") =>
+            stopFlag.put(())
+
+          case Right(line) =>
             Sync[F].delay(writer.println(line)) >>
             loop(reader, writer)
+
+          case Left(ex) =>
+            // readLine() failed.
+            // stopFlag will tell us whether this is a graceful shutdown, or not.
+            stopFlag.isEmpty.flatMap {
+              case true  => Sync[F].delay(println("Stoping server."))
+              case false => Sync[F].raiseError(ex)
+            }
         }
 
     def reader(clientSocket: Socket): Resource[F, BufferedReader] =
