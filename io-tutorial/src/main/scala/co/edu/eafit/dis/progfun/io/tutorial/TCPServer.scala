@@ -1,6 +1,6 @@
 package co.edu.eafit.dis.progfun.io.tutorial
 
-import cats.effect.{Concurrent, ExitCase, ExitCode, IO, IOApp, Resource, Sync}
+import cats.effect.{Blocker, Concurrent, ContextShift, ExitCase, ExitCode, IO, IOApp, Resource, Sync}
 import cats.effect.concurrent.MVar
 import cats.effect.syntax.bracket._ // Provides the bracketCase & guarantee methods.
 import cats.effect.syntax.concurrent._ // Provides the start method.
@@ -20,7 +20,7 @@ object TCPServer extends IOApp {
 }
 
 object TCPServerProgram {
-  def program[F[_] : Concurrent](args: List[String]): F[Unit] =
+  def program[F[_] : Concurrent : ContextShift](args: List[String]): F[Unit] =
     args match {
       case List(arg) =>
         arg.toIntOption.filter(port => (port >= 1024) && (port <= 65535)) match {
@@ -44,19 +44,21 @@ object TCPServerProgram {
         )
     }
 
-  private def serve[F[_]: Concurrent](serverSocket: ServerSocket): F[Unit] =
-    for {
-      stopFlag <- MVar[F].empty[Unit]
-      serverFiber <- server(serverSocket, stopFlag).start
-      _ <- stopFlag.read
-      _ <- serverFiber.cancel.start
-    } yield ()
+  private def serve[F[_]: Concurrent : ContextShift](serverSocket: ServerSocket): F[Unit] =
+    Blocker[F].use { blocker =>
+      for {
+        stopFlag <- MVar[F].empty[Unit]
+        serverFiber <- server(serverSocket, stopFlag, blocker).start
+        _ <- stopFlag.read
+        _ <- serverFiber.cancel.start
+      } yield ()
+    }
 
-  private def server[F[_]: Concurrent](serverSocket: ServerSocket, stopFlag: MVar[F, Unit]): F[Unit] = {
+  private def server[F[_]: Concurrent : ContextShift](serverSocket: ServerSocket, stopFlag: MVar[F, Unit], blocker: Blocker): F[Unit] = {
     Sync[F]
       .delay(serverSocket.accept())
       .bracketCase { socket =>
-        echoProtocol(socket, stopFlag)
+        echoProtocol(socket, stopFlag, blocker)
           .guarantee(Sync[F].delay(socket.close())) // Ensure the socket is closed after use or cancellation.
           .start
       } {
@@ -68,10 +70,10 @@ object TCPServerProgram {
       } >> serve(serverSocket) // Loop endlessly.
   }
 
-  private def echoProtocol[F[_] : Sync](clientSocket: Socket, stopFlag: MVar[F, Unit]): F[Unit] = {
+  private def echoProtocol[F[_] : ContextShift : Sync](clientSocket: Socket, stopFlag: MVar[F, Unit], blocker: Blocker): F[Unit] = {
     def loop(reader: BufferedReader, writer: PrintWriter): F[Unit] =
-      Sync[F]
-        .delay(reader.readLine())
+      blocker
+        .delay(reader.readLine()) // Executed in the blocking execution context.
         .attempt
         .flatMap {
           case Right("") =>
