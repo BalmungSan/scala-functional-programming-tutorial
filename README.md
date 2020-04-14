@@ -44,4 +44,5 @@ The following is a list of bibliographic material used for this tutorial.
 + Erik Bruchez - **Generalized type constraints in Scala (without a PhD)**, Blog. https://blog.bruchez.name/2015/11/generalized-type-constraints-in-scala.html
 + DevInsideYou - **Monads**, Youtube playlist. https://www.youtube.com/playlist?list=PLJGDHERh23x-9bxGrCbyX-tXJG99XczNC
 + Philip Schwarz - **The Monad Fact Slide Deck Series**, Slides. https://www.slideshare.net/pjschwarz/the-monad-fact-slide-deck-series-229474965
++ Ryan Peters - **Streams - Your New Favorite Primitive**, Conference. https://www.youtube.com/watch?v=BZ8O6T7Y1UE
 + Scala Community - **A relaxed chat room about all things Scala**, Gitter Channel. https://gitter.im/scala/scala
