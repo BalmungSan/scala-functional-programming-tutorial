@@ -33,7 +33,7 @@ The following is a list of bibliographic material used for this tutorial.
 + Typelevel - **Cats**, Website. https://typelevel.org/cats
 + Typelevel - **Cats Effect**, Website. https://typelevel.org/cats-effect
 + Rob Norris _(tpolecat)_ - **Cats Infographic**, Image. https://github.com/tpolecat/cats-infographic
-+ Rob Norris _(tpolecat)_ - **Functional Programming with Effects**, Conference. https://slideslive.com/38908886/functional-programming-with-effects
++ Rob Norris _(tpolecat)_ - **Functional Programming with Effects**, Conference talk. https://slideslive.com/38908886/functional-programming-with-effects
 + Rob Norris _(tpolecat)_ - **Introduction to Typeclasses in Scala**, Blog. https://tpolecat.github.io/2013/10/12/typeclass.html
 + Scala Lang - **Scala Standard Library - API**, Scaladoc. https://www.scala-lang.org/api/current
 + Scala Lang - **Tour of Scala**, Docs. https://docs.scala-lang.org/tour/tour-of-scala.html
@@ -44,5 +44,6 @@ The following is a list of bibliographic material used for this tutorial.
 + Erik Bruchez - **Generalized type constraints in Scala (without a PhD)**, Blog. https://blog.bruchez.name/2015/11/generalized-type-constraints-in-scala.html
 + DevInsideYou - **Monads**, Youtube playlist. https://www.youtube.com/playlist?list=PLJGDHERh23x-9bxGrCbyX-tXJG99XczNC
 + Philip Schwarz - **The Monad Fact Slide Deck Series**, Slides. https://www.slideshare.net/pjschwarz/the-monad-fact-slide-deck-series-229474965
-+ Ryan Peters - **Streams - Your New Favorite Primitive**, Conference. https://www.youtube.com/watch?v=BZ8O6T7Y1UE
++ Daenyth - **Intro to Cats-Effect**, Conference talk. https://github.com/daenyth/intro-cats-effect
++ Ryan Peters - **Streams - Your New Favorite Primitive**, Conference talk. https://www.youtube.com/watch?v=BZ8O6T7Y1UE
 + Scala Community - **A relaxed chat room about all things Scala**, Gitter Channel. https://gitter.im/scala/scala
