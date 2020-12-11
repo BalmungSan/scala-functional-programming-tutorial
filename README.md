@@ -30,6 +30,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
 The following is a list of bibliographic material used for this tutorial.
 
 + Underscore - **Scala with Cats**, Book. https://underscore.io/books/scala-with-cats
++ Underscore - **Playing type tetris**, Blog. https://underscore.io/blog/posts/2017/04/11/type-tetris.html
 + Typelevel - **Cats**, Website. https://typelevel.org/cats
 + Typelevel - **Cats Effect**, Website. https://typelevel.org/cats-effect
 + Rob Norris _(tpolecat)_ - **Cats Infographic**, Image. https://github.com/tpolecat/cats-infographic
