@@ -15,6 +15,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
 
 1. `scalaintro` This package contains notes for introduction to the **Scala** Programming Language.
     1. `Expressions.scala` - Expressions and Values.
+    2. `ClassesMethodsFunctions` - Classes, Methods, and Functions.
 
 ## Bibliography
 
