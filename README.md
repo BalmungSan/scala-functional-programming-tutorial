@@ -16,6 +16,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
 1. `scalaintro` This package contains notes for introduction to the **Scala** Programming Language.
     1. `Expressions.scala` - Expressions and Values.
     2. `ClassesMethodsFunctions` - Classes, Methods, and Functions.
+    3. `Collections` - Introduction to basic collection types: `List`, `Array`, `ArraySeq`, `Vector`, `Set`, and `Map`.
 
 ## Bibliography
 
