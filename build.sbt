@@ -5,5 +5,8 @@ lazy val root =
       // Project settings.
       name := "Scala Functional Programming",
       organization := "co.edu.eafit.dis.progfun",
-      scalaVersion := "3.3.3"
+      scalaVersion := "3.3.3",
+      libraryDependencies ++= Seq(
+        "org.typelevel" %% "cats-core" % "2.12.0"
+      )
     )

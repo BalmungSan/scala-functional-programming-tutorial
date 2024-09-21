@@ -18,6 +18,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
     2. `ClassesMethodsFunctions` - Classes, Methods, and Functions.
     3. `Collections` - Introduction to basic collection types: `List`, `Array`, `ArraySeq`, `Vector`, `Set`, and `Map`.
     4. `Combinators` - Introduction to common combinators: `sum`, `contains`, `find`, `exists`, `forall`, `filter`, `map`, `collect`, `collectFirst`, `flatMap`, `foldLeft`, `foldRight`, `groupMapReduce`; and implement them for `List` using recursion or other combinators.
+    5. `Typeclasses` - Brief showcase of typeclasses and **cats**.
 
 ## Bibliography
 
@@ -39,4 +40,5 @@ The following is a list of bibliographic material used for this tutorial.
 + Scala Lang - **Where Does Scala Look For Implicits?**, Docs. https://docs.scala-lang.org/tutorials/FAQ/index.html#where-does-scala-look-for-implicits
 + Scala Lang - **What’s the difference between methods and functions?**, Docs. https://docs.scala-lang.org/tutorials/FAQ/index.html#whats-the-difference-between-methods-and-functions
 + Scala Lang - **Scala Standard Library - API**, Scaladoc. https://scala-lang.org/api/3.3_LTS/
++ Luis Miguel Mejía Suárez _(BalmungSan)_ - **Polymorphism in Scala**. https://gist.github.com/BalmungSan/c19557030181c0dc36533f3de7d7abf4
 + Scala Community - **A relaxed chat room about all things Scala**, Discord Channel. https://discord.com/invite/scala
