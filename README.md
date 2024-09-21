@@ -17,6 +17,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
     1. `Expressions.scala` - Expressions and Values.
     2. `ClassesMethodsFunctions` - Classes, Methods, and Functions.
     3. `Collections` - Introduction to basic collection types: `List`, `Array`, `ArraySeq`, `Vector`, `Set`, and `Map`.
+    4. `Combinators` - Introduction to common combinators: `sum`, `contains`, `find`, `exists`, `forall`, `filter`, `map`, `collect`, `collectFirst`, `flatMap`, `foldLeft`, `foldRight`, `groupMapReduce`; and implement them for `List` using recursion or other combinators.
 
 ## Bibliography
 
