@@ -15,7 +15,7 @@ _(using the [Typelevel stack](https://typelevel.org/projects))_ in it.
 
 1. `scalaintro` This package contains notes for introduction to the **Scala** Programming Language.
     1. `Expressions.scala` - Expressions and Values.
-    2. `ClassesMethodsFunctions` - Classes, Methods, and Functions.
+    2. `ClassesMethodsFunctions` - Classes, Methods, and Functions. As well as an introduction to ADTs, `Option`, `Either`, and `Try`.
     3. `Collections` - Introduction to basic collection types: `List`, `Array`, `ArraySeq`, `Vector`, `Set`, and `Map`.
     4. `Combinators` - Introduction to common combinators: `sum`, `contains`, `find`, `exists`, `forall`, `filter`, `map`, `collect`, `collectFirst`, `flatMap`, `foldLeft`, `foldRight`, `groupMapReduce`; and implement them for `List` using recursion or other combinators.
     5. `Typeclasses` - Brief showcase of typeclasses and **cats**.

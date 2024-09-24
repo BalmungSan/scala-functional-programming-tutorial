@@ -92,52 +92,6 @@ bigCircle.area
 
 println("-----")
 
-println("ADTs -----")
-
-// Algebraic Data Types
-// Is the way we model domains in FP languages using immutable records.
-// We have two basic constructs: Products and Sums (and thus the name algebraic)
-// Products mean grouping multiple types together in a single record.
-// Sums mean allowing for a type to be one or many options.
-// Case classes are products and enums are sums
-
-// A User is either a Client or an Administrator.
-// All kinds of users have an id and a name.
-// A Client has an id, a name, and a balance.
-// An Administrator has an id, a name, and a list of permissions.
-enum User(id: Int, name: String):
-  case Client(id: Int, name: String, balance: Double) extends User(id, name)
-  case Administrator(id: Int, name: String, permissions: List[String])
-      extends User(id, name)
-
-  def debug(): Unit =
-    println(s"User ${id} - ${name}")
-
-val user1: User = User.Client(id = 1, name = "Luis", balance = 135)
-val user2: User = User.Administrator(
-  id = 2,
-  name = "Miguel",
-  permissions = List("foo", "bar", "baz")
-)
-
-// We can use common methods of the parent type.
-user1.debug()
-user2.debug()
-
-// Or use pattern matching to determine the specific case.
-def logic(user: User): Unit =
-  user match
-    case User.Client(_, _, balance) =>
-      println(s"Client with balance: $$ ${balance}")
-
-    case User.Administrator(_, _, permissions) =>
-      println(s"Administrator with permissions: ${permissions.mkString(", ")}")
-
-logic(user1)
-logic(user2)
-
-println("-----")
-
 println("Functions -----")
 
 // Functions and methods are different things; although very similar.
@@ -254,5 +208,115 @@ g4(10)
 // You can imagine the compiler created a lambda like:
 val g5 = applyTwice(x => f4(x))
 g5(10)
+
+println("-----")
+
+println("ADTs -----")
+
+// Algebraic Data Types
+// Is the way we model domains in FP languages using immutable records.
+// We have two basic constructs: Products and Sums (and thus the name algebraic)
+// Products mean grouping multiple types together in a single record.
+// Sums mean allowing for a type to be one or many options.
+// Case classes are products and enums are sums
+
+// A User is either a Client or an Administrator.
+// All kinds of users have an id and a name.
+// A Client has an id, a name, and a balance.
+// An Administrator has an id, a name, and a list of permissions.
+enum User(id: Int, name: String):
+  case Client(id: Int, name: String, balance: Double) extends User(id, name)
+  case Administrator(id: Int, name: String, permissions: List[String])
+      extends User(id, name)
+
+  def debug(): Unit =
+    println(s"User ${id} - ${name}")
+
+val user1: User = User.Client(id = 1, name = "Luis", balance = 135)
+val user2: User = User.Administrator(
+  id = 2,
+  name = "Miguel",
+  permissions = List("foo", "bar", "baz")
+)
+
+// We can use common methods of the parent type.
+user1.debug()
+user2.debug()
+
+// Or use pattern matching to determine the specific case.
+def logic(user: User): Unit =
+  user match
+    case User.Client(_, _, balance) =>
+      println(s"Client with balance: $$ ${balance}")
+
+    case User.Administrator(_, _, permissions) =>
+      println(s"Administrator with permissions: ${permissions.mkString(", ")}")
+
+logic(user1)
+logic(user2)
+
+println("-----")
+
+println("Common ADTs -----")
+
+// The standard library already provides three very common and useful ADTs:
+// Option, Either, Try.
+
+// Option.
+// Represents the possibility of absence of a value.
+// It solves the same problem that null, but in a type safe way.
+// Since an Option[A] is not an A, you can not use it in a way that would trigger a NPE.
+// Rather, you are forced to deal with the possibility of absence:
+// * Via pattern matching, to inspect inside the ADT.
+// * Using eliminators, to remove the effect; like: getOrElse, or fold.
+// * Using combinators, to compose multiple options together; like: map, flatMap, filter, etc.
+enum MyOption[+A]:
+  case MySome(a: A)
+  case MyNone
+
+def safeDivision(a: Int, b: Int): Option[Int] =
+  if (b == 0) then None else Some(a / b)
+
+safeDivision(10, 5)
+safeDivision(0, 1)
+safeDivision(3, 0)
+
+Option(10).getOrElse(default = 0)
+Option(null).getOrElse(default = 0)
+Option(10).fold(ifEmpty = false)(v => v > 5)
+Option.empty[Int].fold(ifEmpty = false)(v => v > 5)
+
+// Either:
+// Represents a basic union type.
+// When you have an Either[A, B] then you either have an A or a B (as the name implies).
+// Meaning that you need to account for any of the two possibilities.
+// Usually the Left is used for errors and the Right for successful values, but it is more general.
+// Similar than option, you can use pattern matching, eliminators, and combinators.
+enum MyEither[+A, +B]:
+  case MyLeft(a: A)
+  case MyRight(b: B)
+
+final case class Error(msg: String)
+
+def parseAndValidateAge(rawAge: String): Either[Error, Int] =
+  rawAge.toIntOption
+    .toRight(left = Error("Age is not a valid integer"))
+    .flatMap { age =>
+      if age >= 18 then Right(age) else Left(Error("User is under age"))
+    }
+
+parseAndValidateAge("21")
+parseAndValidateAge("13")
+parseAndValidateAge("ten")
+
+// Try:
+// Similar to Either, but focuses only exceptions.
+// Its cases are called Failure and Success to represent that.
+enum MyTry[+A]:
+  case MyFailure(ex: Throwable)
+  case MySuccess(a: A)
+
+util.Try(10 / 2)
+util.Try(10 / 0)
 
 println("-----")
