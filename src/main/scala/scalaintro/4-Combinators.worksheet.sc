@@ -67,7 +67,7 @@ averageAgeTailRecursive(ages)
 
 println("-----")
 
-println("Contains, exist, forall, find, filter")
+println("contains, exist, forall, find, filter")
 
 // Use case:
 // Simple data base.
@@ -130,6 +130,13 @@ end existsTailRecursive
 
 existsTailRecursive(data)(_.startsWith("1"))
 existsTailRecursive(data)(_.startsWith("0"))
+
+// Equivalence between exists & contains.
+def containsViaExists[A](data: List[A])(elem: A): Boolean =
+  existsTailRecursive(data)(_ == elem)
+
+containsViaExists(data)(elem = "baz")
+containsViaExists(data)(elem = "Luis")
 
 // Forall:
 // Checks if all elements satisfy the predicate.
