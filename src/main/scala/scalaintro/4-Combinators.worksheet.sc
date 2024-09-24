@@ -321,6 +321,56 @@ def parseTailRecursive(lines: List[String]): List[Long] =
 
 parseTailRecursive(lines)
 
+// Use case:
+// Find the radius of the first Circle in a list of Shapes.
+enum Shape:
+  case Circle(radius: Double)
+  case Rectangle(length: Double, width: Double)
+  case Triangle(base: Double, height: Double)
+
+val shapesWithoutCircle = List(
+  Shape.Rectangle(length = 1, width = 2),
+  Shape.Triangle(base = 10, height = 0.1)
+)
+val shapesWithCircle =
+  Shape.Circle(radius = 3.5d) :: shapesWithoutCircle
+
+def radiusOfFirstCircle(shapes: List[Shape]): Option[Double] =
+  shapes.collectFirst { case Shape.Circle(radius) =>
+    radius
+  }
+
+radiusOfFirstCircle(shapes = shapesWithoutCircle)
+radiusOfFirstCircle(shapes = shapesWithCircle)
+
+// Tail-recursive implementation.
+def collectFirstTailRecursive[A, B](
+    data: List[A]
+)(
+    pf: PartialFunction[A, B]
+): Option[B] =
+  val f = pf.lift
+  def loop(remaining: List[A]): Option[B] =
+    remaining match
+      case head :: tail =>
+        // Technically not tail-recursive,
+        // but orElse ensures no stack is preserved.
+        f(head) orElse loop(remaining = tail)
+
+      case Nil =>
+        None
+
+  loop(remaining = data)
+end collectFirstTailRecursive
+
+def radiusOfFirstCircleTailRecursive(shapes: List[Shape]): Option[Double] =
+  collectFirstTailRecursive(shapes) { case Shape.Circle(radius) =>
+    radius
+  }
+
+radiusOfFirstCircleTailRecursive(shapes = shapesWithoutCircle)
+radiusOfFirstCircleTailRecursive(shapes = shapesWithCircle)
+
 println("-----")
 
 println("flatMap")
