@@ -160,17 +160,17 @@ forallTailRecursive(data)(_.nonEmpty)
 forallTailRecursive(data)(_.size > 5)
 
 // Equivalence between exists & forall.
-def forallViaExists[A](data: List[A])(predicate: A => Boolean): Boolean =
-  !data.exists(a => !predicate(a))
-
-forallViaExists(data)(_.nonEmpty)
-forallViaExists(data)(_.size > 5)
-
 def existsViaForall[A](data: List[A])(predicate: A => Boolean): Boolean =
   !data.forall(a => !predicate(a))
 
 existsViaForall(data)(_.startsWith("1"))
 existsViaForall(data)(_.startsWith("0"))
+
+def forallViaExists[A](data: List[A])(predicate: A => Boolean): Boolean =
+  !data.exists(a => !predicate(a))
+
+forallViaExists(data)(_.nonEmpty)
+forallViaExists(data)(_.size > 5)
 
 // Find:
 // Returns the first element that satisfies a predicate.
