@@ -131,7 +131,7 @@ end existsTailRecursive
 existsTailRecursive(data)(_.startsWith("1"))
 existsTailRecursive(data)(_.startsWith("0"))
 
-// Equivalence between exists & contains.
+// Relationship between exists & contains.
 def containsViaExists[A](data: List[A])(elem: A): Boolean =
   existsTailRecursive(data)(_ == elem)
 
@@ -194,6 +194,10 @@ end findTailRecursive
 
 findTailRecursive(data)(_.isBlank)
 findTailRecursive(data)(_.isEmpty)
+
+// Relationship between find & exists.
+def existsViaFind[A](data: List[A])(predicate: A => Boolean): Boolean =
+  findTailRecursive(data)(predicate).isDefined
 
 // Filter:
 // Returns all the element that satisfies a predicate.
