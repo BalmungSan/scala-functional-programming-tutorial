@@ -162,6 +162,18 @@ def fact3(n: BigInt): BigInt =
 
 fact3(1000)
 
+// A tail-recursive function can always be transformed into a while loop, and vice-versa.
+def fact4(n: BigInt): BigInt =
+  var acc: BigInt = 1
+  var curr = n
+  while (curr > 0) {
+    acc *= curr // acc = acc * curr
+    curr -= 1 // n2 = n2 - 1
+  }
+  acc
+
+fact4(1000)
+
 // Type parameters / Generics.
 // Methods can have type parameters (functions can't in Scala 2, in Scala 3 there is a special kind of polymorphic functions).
 // These are very useful to write reusable logic that preserves type information.
