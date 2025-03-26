@@ -243,8 +243,13 @@ enum User(id: Int, name: String):
 
   def debug(): Unit =
     println(s"User ${id} - ${name}")
+end User
 
-val user1: User = User.Client(id = 1, name = "Luis", balance = 135)
+val user1: User = User.Client(
+  id = 1,
+  name = "Luis",
+  balance = 135
+)
 val user2: User = User.Administrator(
   id = 2,
   name = "Miguel",
@@ -263,6 +268,7 @@ def logic(user: User): Unit =
 
     case User.Administrator(_, _, permissions) =>
       println(s"Administrator with permissions: ${permissions.mkString(", ")}")
+end logic
 
 logic(user1)
 logic(user2)
