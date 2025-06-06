@@ -30,6 +30,7 @@ The following is a list of bibliographic material used for this tutorial.
 + Typelevel - **Cats**, Website. https://typelevel.org/cats
 + Typelevel - **Cats Effect**, Website. https://typelevel.org/cats-effect
 + Fabio Labella _(SystemFw)_- **Programs as Values**, Blog. https://systemfw.org/archive.html
++ Fabio Labella _(SystemFw)_ - **Deriving Tail Recursive Fibonacci**, Blog. https://systemfw.org/posts/tailrec.html
 + Rob Norris _(tpolecat)_ - **Functional Programming with Effects**, Conference talk. https://slideslive.com/38908886/functional-programming-with-effects
 + Rob Norris _(tpolecat)_ - **Introduction to Typeclasses in Scala**, Blog. https://tpolecat.github.io/2013/10/12/typeclass.html
 + Gavin Bisesi _(Daenyth)_ - **Intro to Cats-Effect**, Conference talk. https://github.com/daenyth/intro-cats-effect
