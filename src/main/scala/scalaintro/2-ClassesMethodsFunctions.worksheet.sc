@@ -3,10 +3,11 @@ println("Classes -----")
 // In Scala, you declare the constructor with the class name, and the body is its constructor.
 class SimpleClass(a: Int, val b: String):
   println(s"Constructing a simple class with ${a} and ${b}")
+end SimpleClass
 
 // The new keyword is optional.
 val aSimpleClass =
-  /** new */
+  // new
   SimpleClass(a = 10, b = "Foo")
 
 // By default, the string representation of a class is not very useful.
@@ -18,7 +19,12 @@ aSimpleClass.b
 
 // And equality is done by-reference rather than by value.
 val anotherSimpleClass = SimpleClass(a = 10, b = "Foo")
+
 aSimpleClass == anotherSimpleClass
+aSimpleClass == aSimpleClass
+
+aSimpleClass.hashCode
+anotherSimpleClass.hashCode
 
 println("-----")
 
@@ -46,7 +52,12 @@ aSimpleCaseClass.b
 
 // Equality is by-value.
 val anotherSimpleCaseClass = SimpleCaseClass(a = 10, b = "bar")
+
 aSimpleCaseClass == anotherSimpleCaseClass
+aSimpleCaseClass == SimpleCaseClass(a = 10, b = "baz")
+
+aSimpleCaseClass.hashCode
+anotherSimpleCaseClass.hashCode
 
 // If by-reference equality is needed, you can use the eq method.
 aSimpleCaseClass eq anotherSimpleCaseClass
@@ -56,10 +67,9 @@ aSimpleCaseClass eq aSimpleCaseClass
 aSimpleCaseClass.copy(a = 35)
 
 // You can pattern match on a case class to extract its data.
-aSimpleCaseClass match {
+aSimpleCaseClass match
   case SimpleCaseClass(a, b) =>
     println(s"Case class data: a = ${a} | b = ${b}")
-}
 
 println("-----")
 
@@ -74,7 +84,7 @@ trait Shape:
 
 // A class can then extend multiple traits and implement all the abstract methods.
 case class Circle(r: Double) extends Shape:
-  override def area: Double =
+  override val area: Double =
     math.Pi * math.pow(this.r, 2)
 
   def *(n: Double): Circle =
@@ -155,6 +165,7 @@ def fact3(n: BigInt): BigInt =
       // Recursive case does the recursion as the last action (tail)
       // And uses the accumulator to track the result.
       loop(curr = curr - 1, acc = acc * curr)
+  end loop
 
   // The loop starts with the initial value,
   // and the accumulator with the base case.
@@ -227,7 +238,7 @@ println("ADTs -----")
 
 // Algebraic Data Types
 // Is the way we model domains in FP languages using immutable records.
-// We have two basic constructs: Products and Sums (and thus the name algebraic)
+// We have two basic constructs: Products (Ands) and Sums (Ors) (and thus the name algebraic)
 // Products mean grouping multiple types together in a single record.
 // Sums mean allowing for a type to be one or many options.
 // Case classes are products and enums are sums
@@ -315,12 +326,14 @@ enum MyEither[+A, +B]:
   case MyRight(b: B)
 
 final case class Error(msg: String)
+final case class Age(value: Int)
 
-def parseAndValidateAge(rawAge: String): Either[Error, Int] =
+def parseAndValidateAge(rawAge: String): Either[Error, Age] =
   rawAge.toIntOption
-    .toRight(left = Error("Age is not a valid integer"))
+    .toRight(left = Error(s"${rawAge} is not a valid integer"))
     .flatMap { age =>
-      if age >= 18 then Right(age) else Left(Error("User is under age"))
+      if age >= 18 then Right(Age(value = age))
+      else Left(Error("User is under age"))
     }
 
 parseAndValidateAge("21")
