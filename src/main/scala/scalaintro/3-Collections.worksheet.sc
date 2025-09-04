@@ -18,6 +18,7 @@ val list = List(1, 2, 3)
 
 // They have by-value equality.
 list == List(1, 2, 3)
+list == List(1, 3, 2)
 
 // And human-readable default string representation.
 println(list)
@@ -37,6 +38,65 @@ list :+ 4
 
 // But, prepending is very efficient O(1).
 0 :: list
+
+// Head and tail access are also very efficient O(1).
+list.head
+list.tail
+
+println("-----")
+
+println("Custom List from scratch")
+
+// Implementing a custom List from scratch is very easy.
+// A List is essence a simple ADT.
+// It is either empty, or it is non-empty.
+// If non-empty it has an element as its head,
+// Meaning a List is a succession of non-empty lists
+// until it reaches the empty one.
+// and another list as its tail.
+enum MyList[+A]:
+  case Empty
+  case NonEmpty(head: A, tail: MyList[A])
+
+// These two expressions are equivalent,
+// they both create a List composed of the numbers 1, 2, 3
+// The :: is the NonEmpty case; known as Cons.
+// And Nil is the empty case.
+val l = 1 :: 2 :: 3 :: Nil
+l == List(1, 2, 3)
+
+// This explains why prepending is fast but appending is not.
+// For prepending you can reuse the previous List.
+// But, for appending, you need to traverse the List,
+// add the new element before the end, and re-create everything.
+0 :: l
+l :+ 4
+
+// We can see that more easily using our custom List.
+val ml = MyList.NonEmpty(
+  head = 1,
+  tail = MyList.NonEmpty(
+    head = 2,
+    tail = MyList.NonEmpty(
+      head = 3,
+      tail = MyList.Empty
+    )
+  )
+)
+
+// Prepending is literally only creating a new NonEmpty node.
+MyList.NonEmpty(head = 0, tail = ml)
+
+// But appending requires a full traversal and re-creation.
+def append[A](ml: MyList[A], a: A): MyList[A] =
+  ml match
+    case MyList.Empty =>
+      MyList.NonEmpty(head = a, tail = MyList.Empty)
+
+    case MyList.NonEmpty(head, tail) =>
+      MyList.NonEmpty(head, tail = append(tail, a))
+end append
+append(ml, 4)
 
 println("-----")
 
@@ -87,8 +147,9 @@ println("ArraySeq")
 // which is a small wrapper over plain arrays
 // But who fixes some of downsides of regular arrays like:
 // * Making them immutable.
-// * Providing by-value reference.
+// * Providing by-value equality.
 // * Having a human-readable default string representation.
+// * They are covariant.
 import scala.collection.immutable.ArraySeq
 val as = ArraySeq(1, 2, 3)
 as == ArraySeq(1, 2, 3)
@@ -137,13 +198,15 @@ println("-----")
 println("Set")
 
 // Sets are another kind of collections.
-// They are unordered and don't contain duplicate.s
+// They are unordered and don't contain duplicates.
 // Thus, it doesn't make sense to request elements by index.
 // Rather, they are pretty good at contains checks.
 val set = Set(1, 2, 3)
 
-// Removal of duplicates.
+// Lack of order.
 Set(1, 2, 3, 4, 5, 6, 7)
+
+// Removal of duplicates.
 Set(3, 2, 1, 1, 1, 2, 2, 3)
 
 // Comparison by-value ignores order and duplicates.
@@ -217,60 +280,5 @@ map: Iterable[(Int, Char)]
 // These super types can be useful to define very generic operations.
 // However, they also hide important details from the underlying types.
 // Thus, they should be used with care, otherwise performance degrade a lot.
-
-println("-----")
-
-println("Custom List from scratch")
-
-// Implementing a custom List from scratch is very easy.
-// A List is essence a simple ADT.
-// It is either empty, or it is non-empty.
-// If non-empty it has an element as its head,
-// Meaning a List is a succession of non-empty lists
-// until it reaches the empty one.
-// and another list as its tail.
-enum MyList[+A]:
-  case Empty
-  case NonEmpty(head: A, tail: MyList[A])
-
-// These two expressions are equivalent,
-// they both create a List composed of the numbers 1, 2, 3
-// The :: is the NonEmpty case; known as Cons.
-// And Nil is the empty case.
-val l = 1 :: 2 :: 3 :: Nil
-l == List(1, 2, 3)
-
-// This explains why prepending is fast but appending is not.
-// For prepending you can reuse the previous List.
-// But, for appending, you need to traverse the List,
-// add the new element before the end, and re-create everything.
-0 :: l
-l :+ 4
-
-// We can see that more easily using our custom List.
-val ml = MyList.NonEmpty(
-  head = 1,
-  tail = MyList.NonEmpty(
-    head = 2,
-    tail = MyList.NonEmpty(
-      head = 3,
-      tail = MyList.Empty
-    )
-  )
-)
-
-// Prepending is literally only creating a new NonEmpty node.
-MyList.NonEmpty(head = 0, tail = ml)
-
-// But appending requires a full traversal and re-creation.
-def append[A](ml: MyList[A], a: A): MyList[A] =
-  ml match
-    case MyList.Empty =>
-      MyList.NonEmpty(head = a, tail = MyList.Empty)
-
-    case MyList.NonEmpty(head, tail) =>
-      MyList.NonEmpty(head, tail = append(tail, a))
-end append
-append(ml, 4)
 
 println("-----")
