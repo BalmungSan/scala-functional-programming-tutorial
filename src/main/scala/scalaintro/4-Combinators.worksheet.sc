@@ -199,6 +199,9 @@ findTailRecursive(data)(_.isEmpty)
 def existsViaFind[A](data: List[A])(predicate: A => Boolean): Boolean =
   findTailRecursive(data)(predicate).isDefined
 
+existsViaFind(data)(_.startsWith("1"))
+existsViaFind(data)(_.startsWith("0"))
+
 // Filter:
 // Returns all the element that satisfies a predicate.
 data.filter(_.forall(_.isLetter))
@@ -236,6 +239,14 @@ def filterTailRecursive[A](data: List[A])(predicate: A => Boolean): List[A] =
 end filterTailRecursive
 
 filterTailRecursive(data)(_.forall(_.isLetter))
+
+// Relationship between filter & find.
+// Less efficient, but still functionally equivalent.
+def findViaFilter[A](data: List[A])(predicate: A => Boolean): Option[A] =
+  filterTailRecursive(data)(predicate).headOption
+
+findViaFilter(data)(_.isBlank)
+findViaFilter(data)(_.isEmpty)
 
 println("-----")
 
