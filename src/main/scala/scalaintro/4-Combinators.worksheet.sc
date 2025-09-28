@@ -51,7 +51,7 @@ def sumTailRecursive(nums: List[Int]): Int =
       case head :: tail =>
         loop(
           remaining = tail,
-          acc + head
+          acc = acc + head
         )
 
       case Nil =>
@@ -229,7 +229,7 @@ def filterTailRecursive[A](data: List[A])(predicate: A => Boolean): List[A] =
       case head :: tail =>
         loop(
           remaining = tail,
-          if predicate(head) then head :: acc else acc
+          acc = if predicate(head) then head :: acc else acc
         )
 
       case Nil =>
@@ -269,7 +269,7 @@ def mapTailRecursive[A, B](data: List[A])(f: A => B): List[B] =
       case head :: tail =>
         loop(
           remaining = tail,
-          f(head) :: acc
+          acc = f(head) :: acc
         )
 
       case Nil =>
@@ -319,7 +319,7 @@ def collectTailRecursive[A, B](
       case head :: tail =>
         loop(
           remaining = tail,
-          f(head).fold(ifEmpty = acc)(b => b :: acc)
+          acc = f(head).fold(ifEmpty = acc)(b => b :: acc)
         )
 
       case Nil =>
@@ -416,7 +416,7 @@ def flatMapTailRecursive[A, B](data: List[A])(f: A => List[B]): List[B] =
       case head :: tail =>
         loop(
           remaining = tail,
-          f(head) reverse_::: acc
+          acc = f(head) reverse_::: acc
         )
 
       case Nil =>
@@ -473,7 +473,7 @@ def foldLeftTailRecursive[A, B](elems: List[A], z: B)(op: (B, A) => B): B =
       case head :: tail =>
         loop(
           remaining = tail,
-          op(acc, head)
+          acc = op(acc, head)
         )
 
       case Nil =>
